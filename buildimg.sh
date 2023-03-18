@@ -74,9 +74,17 @@ sudo chroot $targetdir tee "/etc/fstab" > /dev/null <<EOF
 /dev/mmcblk${mmcdev}p${mmcrootpart}		/	ext4	defaults		0	0
 EOF
 
-#sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y openssh-server"
-
 echo $board | sudo tee $targetdir/etc/hostname
+
+if [[ "$board" != "bpi-r2pro" ]];then
+	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd"
+fi
+cp -r conf/generic/* ${targetdir}/
+if [[ -e conf/$board ]];then
+	cp -r conf/${board}/* ${targetdir}/
+fi
+
+sudo chroot $targetdir bash -c "systemctl enable systemd-networkd;systemctl enable systemd-resolved"
 
 sudo umount mnt/BPI-BOOT
 sudo umount mnt/BPI-ROOT
