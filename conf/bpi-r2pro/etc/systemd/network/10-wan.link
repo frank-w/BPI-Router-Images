@@ -1,0 +1,7 @@
+[Match]
+OriginalName=eth0
+
+[Link]
+Name=wan
+#MACAddressPolicy=none
+#MACAddress=08:22:33:44:55:77

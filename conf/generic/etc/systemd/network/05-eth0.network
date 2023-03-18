@@ -1,0 +1,7 @@
+[Match]
+Name=eth0
+
+[Network]
+DHCP=no
+LinkLocalAddressing=no
+ConfigureWithoutCarrier=true

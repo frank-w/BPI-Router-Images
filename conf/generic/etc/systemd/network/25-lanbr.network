@@ -1,0 +1,45 @@
+[Match]
+Name=lanbr0
+
+#[Link]
+# Override MAC address (spoof MAC address)
+#MACAddress=08:22:33:44:55:66
+
+[Network]
+BindCarrier=eth0
+#ConfigureWithoutCarrier=true
+
+#DHCP=ipv4
+
+#static setup
+Address=192.168.1.1/24
+#Gateway=192.168.0.10
+#DNS=192.168.0.10
+
+#VLAN=vlan500
+#VLAN=vlan600
+
+IPForward=yes
+#needs iptables to be installed
+#IPMasquerade=yes
+
+Tunnel=he-ipv6
+
+DHCPServer=yes
+#IPv6SendRA=yes
+#DHCPv6PrefixDelegation=yes
+
+[DHCPServer]
+PoolOffset=100
+PoolSize=150
+
+#[IPv6SendRA]
+#Managed=true
+
+#[IPv6Prefix]
+#Prefix=fd00:A::/64
+
+#[Route]
+#Gateway=192.168.0.10
+#Destination=10.0.3.0/24
+#GatewayOnLink=yes
