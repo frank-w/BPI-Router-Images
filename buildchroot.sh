@@ -15,6 +15,8 @@ arch=arm64
 #arch=amd64
 #arch=x86_64
 
+ramdisksize=1G
+
 #sudo apt install debootstrap qemu-user-static
 function checkpkg(){
 	echo "checking for needed packages..."
@@ -52,9 +54,22 @@ echo "create chroot '${name} ${distro}' for ${arch}"
 
 #set -x
 targetdir=$(pwd)/${name}_${distro}_${arch}
-if [[ -e $targetdir ]]; then echo "$targetdir already exists - aborting";exit;fi
+content=$(ls -A $targetdir 2>/dev/null)
+
+if [[ -e $targetdir ]] && [[ "$content" ]]; then echo "$targetdir already exists - aborting";exit;fi
+
 mkdir -p $targetdir
 sudo chown root:root $targetdir
+
+if [[ "$ramdisksize" != "" ]];
+then
+	mount | grep '\s'$targetdir'\s' &>/dev/null #$?=0 found;1 not found
+	if [[ $? -ne 0 ]];then
+		echo "mounting tmpfs for building..."
+		sudo mount -t tmpfs -o size=$ramdisksize none $targetdir
+	fi
+fi
+
 #mount | grep 'proc\|sys'
 sudo debootstrap --arch=$arch --foreign $distro $targetdir
 case "$arch" in
@@ -118,3 +133,10 @@ echo 'bpi'| sudo tee $targetdir/etc/hostname
 cd $targetdir
 sudo tar -czf ../${distro}_${arch}.tar.gz .
 )
+
+if [[ "$ramdisksize" != "" ]];
+then
+	echo "umounting tmpfs..."
+	sudo umount $targetdir
+fi
+
