@@ -45,8 +45,11 @@ python3 downloadfiles.py ${board} ${kernel}
 . sourcefiles_${board}.conf
 echo "image-file:"$imgfile
 echo "kernel-file:"$kernelfile
-
-./buildchroot.sh ${arch} ${distro}
+if [[ ! -e ${distro}_${arch}.tar.gz ]];then
+	./buildchroot.sh ${arch} ${distro}
+else
+	echo "packed rootfs already exists"
+fi
 ls -lh ${distro}_${arch}.tar.gz
 
 echo "unpack imgfile..."
@@ -98,6 +101,12 @@ fi
 sudo cp -r conf/generic/* ${targetdir}/
 if [[ -e conf/$board ]];then
 	sudo cp -r conf/${board}/* ${targetdir}/
+	#fix for copy dir over symlink (rejected by cp)
+	for d in bin lib sbin;do
+		if [[ -d conf/${board}/$d ]];then
+			sudo cp -r conf/${board}/$d/* ${targetdir}/$d/
+		fi
+	done
 fi
 
 sudo chroot $targetdir bash -c "systemctl enable systemd-networkd;systemctl enable systemd-resolved"
