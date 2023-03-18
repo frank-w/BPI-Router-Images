@@ -49,22 +49,38 @@ echo "kernel-file:"$kernelfile
 ./buildchroot.sh ${arch} ${distro}
 ls -lh ${distro}_${arch}.tar.gz
 
-echo "unpack imgfile...(not yet)"
+echo "unpack imgfile..."
 gunzip $imgfile
-echo "setting up imgfile to loopdev...(not yet)"
+echo "setting up imgfile to loopdev..."
 LDEV=`losetup -f`
 sudo losetup ${LDEV} ${imgfile%.*} 1> /dev/null
-echo "mounting loopdev...(not yet)"
+echo "mounting loopdev..."
 sudo partprobe ${LDEV}
 mkdir -p mnt/BPI-{B,R}OOT
 sudo mount ${LDEV}p${mmcbootpart} mnt/BPI-BOOT
 sudo mount ${LDEV}p${mmcrootpart} mnt/BPI-ROOT
-echo "unpack rootfs to bpi-root loopdev...(not yet)"
+echo "unpack rootfs to bpi-root loopdev..."
 sudo tar -xzf ${distro}_${arch}.tar.gz -C mnt/BPI-ROOT
-echo "unpack kernel to bpi-boot loopdev...(not yet)"
+echo "unpack kernel to bpi-boot loopdev..."
 sudo tar -xzf $kernelfile --strip-components=1 -C mnt/BPI-BOOT BPI-BOOT
-echo "unpack kernel-modules to bpi-root loopdev...(not yet)"
+echo "unpack kernel-modules to bpi-root loopdev..."
 sudo tar -xzf $kernelfile --strip-components=2 -C mnt/BPI-ROOT/lib/ BPI-ROOT/lib/
+
+if [[ "$board" == "bpi-r2pro" ]];then
+	conffile=mnt/BPI-BOOT/extlinux/extlinux.conf
+	#mkdir -p $(dirname ${conffile})
+	imgname="Image.gz"
+	dtbname="bpi-r2pro.dtb"
+	ls -la $(dirname ${conffile})
+	echo -e "menu title Select the boot mode\n#timeout 1/10s\nTIMEOUT 50\nDEFAULT linux" | sudo tee $conffile
+	echo -e "LABEL linux\n	linux $imgname\n	fdt $dtbname\n"\
+		"	append earlycon=uart8250,mmio32,0xfe660000 " \
+		"console=ttyS2,1500000n8 root=/dev/mmcblk${mmcdev}p${mmcrootpart} rootwait rw " \
+		"earlyprintk" | sudo tee -a $conffile
+	cat ${conffile}
+fi
+
+echo "configure rootfs for ${board}..."
 
 targetdir="mnt/BPI-ROOT"
 
@@ -79,9 +95,9 @@ echo $board | sudo tee $targetdir/etc/hostname
 if [[ "$board" != "bpi-r2pro" ]];then
 	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd"
 fi
-cp -r conf/generic/* ${targetdir}/
+sudo cp -r conf/generic/* ${targetdir}/
 if [[ -e conf/$board ]];then
-	cp -r conf/${board}/* ${targetdir}/
+	sudo cp -r conf/${board}/* ${targetdir}/
 fi
 
 sudo chroot $targetdir bash -c "systemctl enable systemd-networkd;systemctl enable systemd-resolved"
