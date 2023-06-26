@@ -2,11 +2,13 @@
 #sudo apt-get install qemu-user-static debootstrap binfmt-support
 
 #debian
+distro_debian=(buster bullseye bookworm)
 name=debian
-#distro=bookworm
-distro=bullseye
+#distro=bullseye
+distro=bookworm
 
 #ubuntu
+distro_ubuntu=(focal jammy)
 #name=ubuntu
 #distro=jammy #22.04
 
@@ -41,12 +43,20 @@ fi
 
 if [[ -n "$2" ]];then
 	echo "\$2:"$2
-	if [[ "$2" =~ buster|bullseye|jammy ]];then
-		echo "setting arch"
+
+	isdebian=$(echo ${distro_debian[@]} | grep -o "$2" | wc -w)
+	isubuntu=$(echo ${distro_ubuntu[@]} | grep -o "$2" | wc -w)
+
+	echo "isdebian:$isdebian,isubuntu:$isubuntu"
+	if [[ $isdebian -ne 0 ]] || [[ $isubuntu -ne 0 ]];then
+		echo "setting distro"
 		distro=$2
-		if [[ "$2" == jammy ]];then
+		if [[ $isubuntu -ne 0 ]];then
 			name="ubuntu"
 		fi
+	else
+		echo "invalid distro $2"
+		exit 1
 	fi
 fi
 

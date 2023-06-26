@@ -52,11 +52,13 @@ else
 fi
 ls -lh ${distro}_${arch}.tar.gz
 
+newimgfile=${board}_${distro}_${kernel}.img.gz
+cp $imgfile $newimgfile
 echo "unpack imgfile..."
-gunzip $imgfile
+gunzip $newimgfile
 echo "setting up imgfile to loopdev..."
 LDEV=`losetup -f`
-sudo losetup ${LDEV} ${imgfile%.*} 1> /dev/null
+sudo losetup ${LDEV} ${newimgfile%.*} 1> /dev/null
 echo "mounting loopdev..."
 sudo partprobe ${LDEV}
 mkdir -p mnt/BPI-{B,R}OOT
@@ -67,7 +69,7 @@ sudo tar -xzf ${distro}_${arch}.tar.gz -C mnt/BPI-ROOT
 echo "unpack kernel to bpi-boot loopdev..."
 sudo tar -xzf $kernelfile --strip-components=1 -C mnt/BPI-BOOT BPI-BOOT
 echo "unpack kernel-modules to bpi-root loopdev..."
-sudo tar -xzf $kernelfile --strip-components=2 -C mnt/BPI-ROOT/lib/ BPI-ROOT/lib/
+sudo tar -xzf $kernelfile --strip-components=2 -C mnt/BPI-ROOT/lib/. BPI-ROOT/lib/
 
 if [[ "$board" == "bpi-r2pro" ]];then
 	conffile=mnt/BPI-BOOT/extlinux/extlinux.conf
@@ -98,6 +100,7 @@ echo $board | sudo tee $targetdir/etc/hostname
 if [[ "$board" != "bpi-r2pro" ]];then
 	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd"
 fi
+
 sudo cp -r conf/generic/* ${targetdir}/
 if [[ -e conf/$board ]];then
 	sudo cp -r conf/${board}/* ${targetdir}/
@@ -108,10 +111,11 @@ if [[ -e conf/$board ]];then
 		fi
 	done
 fi
-
-sudo chroot $targetdir bash -c "systemctl enable systemd-networkd;systemctl enable systemd-resolved"
+sudo chroot $targetdir bash -c "systemctl enable systemd-networkd"
+sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
 
 sudo umount mnt/BPI-BOOT
 sudo umount mnt/BPI-ROOT
 sudo losetup -d ${LDEV}
-gzip ${imgfile%.*}
+echo "packing ${newimgfile}"
+gzip ${newimgfile%.*}
