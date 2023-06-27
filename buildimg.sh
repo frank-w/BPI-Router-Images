@@ -51,6 +51,7 @@ else
 	echo "packed rootfs already exists"
 fi
 ls -lh ${distro}_${arch}.tar.gz
+ls -lh ${imgfile}
 
 newimgfile=${board}_${distro}_${kernel}.img.gz
 cp $imgfile $newimgfile
@@ -103,7 +104,8 @@ fi
 
 sudo cp -r conf/generic/* ${targetdir}/
 if [[ -e conf/$board ]];then
-	sudo cp -r conf/${board}/* ${targetdir}/
+	sudo rsync -av --partial --progress --exclude={'bin','lib','sbin'} conf/${board}/. ${targetdir}/
+
 	#fix for copy dir over symlink (rejected by cp)
 	for d in bin lib sbin;do
 		if [[ -d conf/${board}/$d ]];then
