@@ -6,7 +6,7 @@ currently WIP, images not yet tested
 
 ```sh
 ./buildimg.sh bpi-r2 jammy
-./buildimg.sh bpi-r3 bullseye
+./buildimg.sh bpi-r3 bookworm
 ```
 
 # how to write image
