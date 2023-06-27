@@ -99,9 +99,12 @@ if ufile:
     a = urlparse(ufile)
     fname=os.path.basename(a.path)
     print(f"ubootfile: {ufile} filename: {fname}")
-    if not os.path.isfile(fname):
+    if os.path.isfile(fname):
+        print(fname,"already exists")
+        c=input('overwrite it [yn]? ').lower()
+    else: c='y'
+    if c=='y':
         download(ufile,fname)
-    else: print(fname,"already exists")
     with open(conffile, 'w') as f:
         f.write("imgfile="+fname+'\n')
 
