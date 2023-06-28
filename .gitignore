@@ -1,0 +1,6 @@
+*~*
+*.img
+*.gz
+firmware
+sourcefiles_*.conf
+mnt/
