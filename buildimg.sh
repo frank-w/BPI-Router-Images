@@ -98,6 +98,10 @@ EOF
 
 echo $board | sudo tee $targetdir/etc/hostname
 
+if [[ ${board} != "bpi-r2pro" ]];then
+	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd iw xz-utils"
+fi
+
 sudo cp -r conf/generic/* ${targetdir}/
 if [[ -e conf/$board ]];then
 	sudo rsync -av --partial --progress --exclude={'bin','lib','sbin'} conf/${board}/. ${targetdir}/
@@ -110,11 +114,9 @@ if [[ -e conf/$board ]];then
 	done
 fi
 sudo chroot $targetdir bash -c "systemctl enable systemd-networkd"
-sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
 
 #wifi related commands
 if [[ ${board} != "bpi-r2pro" ]];then
-	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd iw xz-utils"
 	#fix for ConditionFileNotEmpty in existing hostapd service (can also point to ${DAEMON_CONF})
 	sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
 
@@ -132,6 +134,8 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	sudo cp -r regulatory.* ${targetdir}/lib/firmware/
 fi
 
+#install/start resolved after all is done
+sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
 sudo umount mnt/BPI-BOOT
 sudo umount mnt/BPI-ROOT
 sudo losetup -d ${LDEV}
