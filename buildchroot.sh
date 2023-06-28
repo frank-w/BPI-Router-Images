@@ -113,26 +113,30 @@ echo 'root:bananapi' | sudo chroot $targetdir /usr/sbin/chpasswd
 
 langcode=de
 if [[ "$name" == "debian" ]];then
+trees="main contrib non-free non-free-firmware"
+if [[ "$distro" =~ bookworm ]];then trees="$trees non-free-firmware"; fi
 sudo chroot $targetdir tee "/etc/apt/sources.list" > /dev/null <<EOF
-deb http://ftp.$langcode.debian.org/debian $distro main contrib non-free
-deb-src http://ftp.$langcode.debian.org/debian $distro main contrib non-free
-deb http://ftp.$langcode.debian.org/debian $distro-updates main contrib non-free
-deb-src http://ftp.$langcode.debian.org/debian $distro-updates main contrib non-free
-deb http://security.debian.org/debian-security ${distro}-security main contrib non-free
-deb-src http://security.debian.org/debian-security ${distro}-security main contrib non-free
+deb http://ftp.$langcode.debian.org/debian $distro $trees
+deb-src http://ftp.$langcode.debian.org/debian $distro $trees
+deb http://ftp.$langcode.debian.org/debian $distro-updates $trees
+deb-src http://ftp.$langcode.debian.org/debian $distro-updates $trees
+deb http://security.debian.org/debian-security ${distro}-security $trees
+deb-src http://security.debian.org/debian-security ${distro}-security $trees
 EOF
 else
+trees="main universe restricted multiverse"
 sudo chroot $targetdir tee "/etc/apt/sources.list" > /dev/null <<EOF
-deb http://ports.ubuntu.com/ubuntu-ports/ $distro main universe restricted multiverse
-deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro main universe restricted multiverse
-deb http://ports.ubuntu.com/ubuntu-ports/ $distro-security main universe restricted multiverse
-deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro-security main universe restricted multiverse
-deb http://ports.ubuntu.com/ubuntu-ports/ $distro-updates main universe restricted multiverse
-deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro-updates main universe restricted multiverse
-deb http://ports.ubuntu.com/ubuntu-ports/ $distro-backports main universe restricted multiverse
-deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro-backports main universe restricted multiverse
+deb http://ports.ubuntu.com/ubuntu-ports/ $distro $trees
+deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro $trees
+deb http://ports.ubuntu.com/ubuntu-ports/ $distro-security $trees
+deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro-security $trees
+deb http://ports.ubuntu.com/ubuntu-ports/ $distro-updates $trees
+deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro-updates $trees
+deb http://ports.ubuntu.com/ubuntu-ports/ $distro-backports $trees
+deb-src http://ports.ubuntu.com/ubuntu-ports/ $distro-backports $trees
 EOF
 fi
+#sudo chroot $targetdir cat "/etc/apt/sources.list"
 
 sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y openssh-server"
 echo 'PermitRootLogin=yes'| sudo tee -a $targetdir/etc/ssh/sshd_config
