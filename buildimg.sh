@@ -116,6 +116,15 @@ fi
 sudo chroot $targetdir bash -c "systemctl enable systemd-networkd"
 sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
 
+if [[ ${board} != "bpi-r2pro" ]];then
+	#copy firmware
+	if [[ ! -d firmware ]];
+	then
+		./getfirmware.sh
+	fi
+	echo "copy firmware files"
+	sudo cp -r firmware/* ${targetdir}/lib/firmware/
+fi
 sudo umount mnt/BPI-BOOT
 sudo umount mnt/BPI-ROOT
 sudo losetup -d ${LDEV}
