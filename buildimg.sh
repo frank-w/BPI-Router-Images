@@ -38,6 +38,21 @@ case "$board" in
 	;;
 esac
 
+LDEV=`losetup -f`
+
+function cleanup() {
+	sudo umount mnt/BPI-BOOT
+	sudo umount mnt/BPI-ROOT
+	sudo losetup -d $1
+}
+
+trap ctrl_c INT
+function ctrl_c() {
+        echo "** Trapped CTRL-C ($LDEV)"
+	cleanup $LDEV
+	exit 1
+}
+
 echo "create image for ${board} (${arch}) ${distro} ${kernel}"
 
 python3 downloadfiles.py ${board} ${kernel}
@@ -58,7 +73,6 @@ cp $imgfile $newimgfile
 echo "unpack imgfile..."
 gunzip $newimgfile
 echo "setting up imgfile to loopdev..."
-LDEV=`losetup -f`
 sudo losetup ${LDEV} ${newimgfile%.*} 1> /dev/null
 echo "mounting loopdev..."
 sudo partprobe ${LDEV}
@@ -136,8 +150,8 @@ fi
 
 #install/start resolved after all is done
 sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
-sudo umount mnt/BPI-BOOT
-sudo umount mnt/BPI-ROOT
-sudo losetup -d ${LDEV}
+
+cleanup ${LDEV}
+
 echo "packing ${newimgfile}"
 gzip ${newimgfile%.*}
