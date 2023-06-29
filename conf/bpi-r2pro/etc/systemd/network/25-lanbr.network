@@ -7,7 +7,7 @@ Name=lanbr0
 
 [Network]
 BindCarrier=eth1
-#ConfigureWithoutCarrier=true
+ConfigureWithoutCarrier=true
 
 #DHCP=ipv4
 
