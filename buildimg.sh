@@ -22,7 +22,7 @@ case "$board" in
 		arch="arm64"
 	;;
 	"bpi-r2pro")
-		mmcdev=1
+		mmcdev=0
 		mmcbootpart=2
 		mmcrootpart=3
 		arch="arm64"
