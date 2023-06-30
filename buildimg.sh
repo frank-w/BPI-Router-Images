@@ -93,7 +93,8 @@ if [[ "$board" == "bpi-r2pro" ]];then
 	dtbname="bpi-r2pro.dtb"
 	ls -la $(dirname ${conffile})
 	echo -e "menu title Select the boot mode\n#timeout 1/10s\nTIMEOUT 50\nDEFAULT linux" | sudo tee $conffile
-	echo -e "LABEL linux\n	linux $imgname\n	fdt $dtbname\n"\
+	#new bootchain searches in root for files so add extlinux
+	echo -e "LABEL linux\n	linux extlinux/$imgname\n	fdt extlinux/$dtbname\n"\
 		"	append earlycon=uart8250,mmio32,0xfe660000 " \
 		"console=ttyS2,1500000n8 root=/dev/mmcblk${mmcdev}p${mmcrootpart} rootwait rw " \
 		"earlyprintk" | sudo tee -a $conffile
