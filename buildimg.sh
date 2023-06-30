@@ -78,7 +78,9 @@ echo "mounting loopdev..."
 sudo partprobe ${LDEV}
 mkdir -p mnt/BPI-{B,R}OOT
 sudo mount ${LDEV}p${mmcbootpart} mnt/BPI-BOOT
+if [[ $? -ne 0 ]];then echo "mounting BPI-BOOT failed"; exit 1; fi
 sudo mount ${LDEV}p${mmcrootpart} mnt/BPI-ROOT
+if [[ $? -ne 0 ]];then echo "mounting BPI-ROOT failed"; exit 1; fi
 echo "unpack rootfs to bpi-root loopdev..."
 sudo tar -xzf ${distro}_${arch}.tar.gz -C mnt/BPI-ROOT
 echo "unpack kernel to bpi-boot loopdev..."
