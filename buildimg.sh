@@ -38,6 +38,8 @@ case "$board" in
 	;;
 esac
 
+if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
+
 LDEV=`losetup -f`
 
 function cleanup() {
