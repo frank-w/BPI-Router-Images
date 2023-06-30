@@ -58,15 +58,19 @@ echo "create image for ${board} (${arch}) ${distro} ${kernel}"
 python3 downloadfiles.py ${board} ${kernel}
 
 . sourcefiles_${board}.conf
-echo "image-file:"$imgfile
-echo "kernel-file:"$kernelfile
+echo "image-file: "$imgfile
+echo "kernel-file: "$kernelfile
 if [[ ! -e ${distro}_${arch}.tar.gz ]];then
 	./buildchroot.sh ${arch} ${distro}
 else
 	echo "packed rootfs already exists"
 fi
-ls -lh ${distro}_${arch}.tar.gz
 ls -lh ${imgfile}
+if [[ $? -ne 0 ]];then echo "bootloader file missing"; exit 1; fi
+ls -lh ${distro}_${arch}.tar.gz
+if [[ $? -ne 0 ]];then echo "rootfs file missing"; exit 1; fi
+ls -lh ${kernelfile}
+if [[ $? -ne 0 ]];then echo "kernel file missing"; exit 1; fi
 
 newimgfile=${board}_${distro}_${kernel}.img.gz
 cp $imgfile $newimgfile
@@ -158,3 +162,5 @@ cleanup ${LDEV}
 
 echo "packing ${newimgfile}"
 gzip ${newimgfile%.*}
+echo "install it this way:"
+echo "gunzip -c ${newimgfile} | sudo dd bs=1M status=progress conv=notrunc,fsync of=/dev/sdX"
