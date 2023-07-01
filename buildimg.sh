@@ -91,6 +91,7 @@ echo "unpack rootfs to bpi-root loopdev..."
 sudo tar -xzf ${distro}_${arch}.tar.gz -C mnt/BPI-ROOT
 echo "unpack kernel to bpi-boot loopdev..."
 sudo tar -xzf $kernelfile --strip-components=1 -C mnt/BPI-BOOT BPI-BOOT
+ls -lR mnt/BPI-BOOT
 echo "unpack kernel-modules to bpi-root loopdev..."
 sudo tar -xzf $kernelfile --strip-components=2 -C mnt/BPI-ROOT/lib/. BPI-ROOT/lib/
 
@@ -154,6 +155,10 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	curl https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git/plain/regulatory.db.p7s -o regulatory.db.p7s
 
 	sudo cp -r regulatory.* ${targetdir}/lib/firmware/
+
+	if [[ ${board} == "bpi-r64" ]];then
+		echo "mt7615e" | sudo tee -a ${targetdir}/etc/modules
+	fi
 fi
 
 #install/start resolved after all is done
