@@ -141,8 +141,18 @@ sudo chroot $targetdir bash -c "systemctl enable systemd-networkd"
 #wifi related commands
 if [[ ${board} != "bpi-r2pro" ]];then
 	#fix for ConditionFileNotEmpty in existing hostapd service (can also point to ${DAEMON_CONF})
-	sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
-
+	if [[ ${board} == "bpi-r2" ]];then
+		sudo mv $targetdir/etc/hostapd/hostapd_{wlan,ap}0.conf
+		sudo sed -i 's/^#\(interface=ap0\)/\1/' $targetdir/etc/hostapd/hostapd_ap0.conf
+		cat $targetdir/etc/hostapd/hostapd_ap0.conf
+		sudo chroot $targetdir bash -c "ln -fs hostapd_ap0.conf /etc/hostapd/hostapd.conf"
+		#unpack wmt-tools
+		sudo tar -xzf $kernelfile --strip-components=1 -C $targetdir BPI-ROOT/{etc,usr,system}
+		#add wifi.sh to rc.local (autostart)
+		#sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
+	else
+		sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
+	fi
 	#copy firmware
 	if [[ ! -d firmware ]];
 	then
