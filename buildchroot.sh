@@ -152,5 +152,6 @@ if [[ "$ramdisksize" != "" ]];
 then
 	echo "umounting tmpfs..."
 	sudo umount $targetdir
+else
+	sudo rm -rf $targetdir/.
 fi
-
