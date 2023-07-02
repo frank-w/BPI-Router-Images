@@ -148,8 +148,10 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		sudo chroot $targetdir bash -c "ln -fs hostapd_ap0.conf /etc/hostapd/hostapd.conf"
 		#unpack wmt-tools
 		sudo tar -xzf $kernelfile --strip-components=1 -C $targetdir BPI-ROOT/{etc,usr,system}
+		#disable ip setting and dnsmasq (done via systemd-config)
+		sed -i "/hostapd started...set IP/,/service dnsmasq restart/d" $targetdir/usr/sbin/wifi.sh
 		#add wifi.sh to rc.local (autostart)
-		#sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
+		sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
 	else
 		sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
 	fi
