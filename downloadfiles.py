@@ -17,6 +17,24 @@ if argc>0:
 print(f"board  : {board}")
 print(f"kernel : {kernel}")
 
+def read_settings(infile):
+    config={}
+    with open(infile) as f:
+        for line in f:
+            # ignore comments
+            if line[0] == '#':
+                continue
+            key, value = line.split("=", 1)
+            key = key.lower()
+            config[key]=value.replace("\n", "")
+    return config
+
+config=None
+conffile='sourcefiles_'+board+'.conf'
+if os.path.isfile(conffile):
+    config=read_settings(conffile)
+    print(config)
+
 def download(url, file_name=None):
     # get request
     response = requests.get(url)
@@ -94,7 +112,6 @@ if board and board in ubootfiles:
         else: print(f"kernel not in kfiles")
     else: print(f"kernel not set!")
 
-conffile='sourcefiles_'+board+'.conf'
 if ufile:
     a = urlparse(ufile)
     fname=os.path.basename(a.path)
@@ -108,7 +125,11 @@ if ufile:
     with open(conffile, 'w') as f:
         f.write("imgfile="+fname+'\n')
 
-if kfile:
+if config and config.get("skipkerneldownload"):
+    with open(conffile, 'a') as f:
+        f.write("skipkerneldownload="+config.get("skipkerneldownload")+'\n')
+        f.write("kernelfile="+config.get("kernelfile")+'\n')
+elif kfile:
     a = urlparse(kfile)
     fname=os.path.basename(a.path)
     print(f"kernelfile: {kfile} filename: {fname}")
