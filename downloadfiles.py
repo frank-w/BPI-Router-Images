@@ -111,6 +111,7 @@ if board and board in ubootfiles:
             else: print(f"board not in kfiles[kernel]")
         else: print(f"kernel not in kfiles")
     else: print(f"kernel not set!")
+else: print(f"{board} not found in ubootfiles")
 
 if ufile:
     a = urlparse(ufile)
@@ -124,6 +125,7 @@ if ufile:
         download(ufile,fname)
     with open(conffile, 'w') as f:
         f.write("imgfile="+fname+'\n')
+else: print("no uboot image defined!")
 
 if config and config.get("skipkerneldownload"):
     with open(conffile, 'a') as f:
@@ -138,3 +140,4 @@ elif kfile:
     else: print(fname,"already exists")
     with open(conffile, 'a') as f:
         f.write("kernelfile="+fname+'\n')
+else: print("no kernel defined!")
