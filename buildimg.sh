@@ -7,6 +7,9 @@
 board=$1
 distro=$2 #buster|bullseye|jammy
 kernel="6.1"
+
+LANG=C
+
 case "$board" in
 	"bpi-r2")
 		mmcdev=0
@@ -40,6 +43,18 @@ esac
 
 if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
 
+PACKAGE_Error=0
+PACKAGES=$(dpkg -l | awk '{print $2}')
+NEEDED_PKGS="python3 parted qemu-user-static debootstrap binfmt-support"
+echo "needed: $NEEDED_PKGS"
+for package in $NEEDED_PKGS; do
+	#TESTPKG=$(dpkg -l |grep "\s${package}")
+	TESTPKG=$(echo "$PACKAGES" |grep "^${package}")
+	if [[ -z "${TESTPKG}" ]];then echo "please install ${package}";PACKAGE_Error=1;fi
+done
+if [ ${PACKAGE_Error} == 1 ]; then return 1; fi
+
+
 LDEV=`losetup -f`
 
 function cleanup() {
@@ -58,6 +73,9 @@ function ctrl_c() {
 echo "create image for ${board} (${arch}) ${distro} ${kernel}"
 
 python3 downloadfiles.py ${board} ${kernel}
+
+ls -lh sourcefiles_${board}.conf
+if [[ $? -ne 0 ]];then echo "sourcefiles_$board.conf file missing"; exit 1; fi
 
 . sourcefiles_${board}.conf
 echo "image-file: "$imgfile
@@ -80,8 +98,10 @@ echo "unpack imgfile..."
 gunzip $newimgfile
 echo "setting up imgfile to loopdev..."
 sudo losetup ${LDEV} ${newimgfile%.*} 1> /dev/null
+if [[ $? -ne 0 ]];then echo "losetup failed"; exit 1; fi
 echo "mounting loopdev..."
 sudo partprobe ${LDEV}
+if [[ $? -ne 0 ]];then echo "partprobe failed"; exit 1; fi
 mkdir -p mnt/BPI-{B,R}OOT
 sudo mount ${LDEV}p${mmcbootpart} mnt/BPI-BOOT
 if [[ $? -ne 0 ]];then echo "mounting BPI-BOOT failed"; exit 1; fi
