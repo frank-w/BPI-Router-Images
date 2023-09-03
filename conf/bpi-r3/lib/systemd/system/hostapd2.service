@@ -10,7 +10,7 @@ Restart=on-failure
 RestartSec=2
 Environment=DAEMON_CONF=/etc/hostapd/hostapd.conf
 EnvironmentFile=-/etc/default/hostapd
-ExecStart=/usr/sbin/hostapd -B -P /run/hostapd.pid -B $DAEMON2_OPTS ${DAEMON_CONF2}
+ExecStart=/usr/sbin/hostapd -B -P /run/hostapd2.pid -B $DAEMON2_OPTS ${DAEMON_CONF2}
 
 [Install]
 WantedBy=multi-user.target
