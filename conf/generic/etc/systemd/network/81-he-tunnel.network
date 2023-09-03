@@ -1,0 +1,9 @@
+#https://wiki.archlinux.org/title/IPv6_tunnel_broker_setup#systemd-networkd
+[Match]
+Name=he-ipv6
+
+[Network]
+#Address=<local IPv6>
+#Gateway=<IPv6 gateway>
+#DNS=2001:4860:4860::8888
+#DNS=2001:4860:4860::8844

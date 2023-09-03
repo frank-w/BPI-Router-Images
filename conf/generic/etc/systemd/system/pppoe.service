@@ -1,0 +1,43 @@
+#https://www.sherbers.de/diy-linux-router-part-3-pppoe-and-routing/
+[Unit]
+Description=Connect DSL
+After=network.target
+
+[Service]
+Type=exec
+ExecStart=/usr/sbin/pppd call provider
+StandardOutput=null
+
+Restart=always
+RestartSec=10s
+
+# filesystem access
+ProtectSystem=strict
+ReadWritePaths=/run/
+
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+
+# network
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_PPPOX AF_PACKET AF_NETLINK
+
+# misc
+NoNewPrivileges=true
+RestrictRealtime=true
+MemoryDenyWriteExecute=true
+ProtectKernelLogs=true
+LockPersonality=true
+ProtectHostname=true
+RemoveIPC=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+
+# capabilities
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+[Install]
+WantedBy=multi-user.target
