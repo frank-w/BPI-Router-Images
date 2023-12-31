@@ -109,8 +109,8 @@ if [[ $? -ne 0 ]];then echo "partprobe failed"; exit 1; fi
 mkdir -p mnt/BPI-{B,R}OOT
 sudo mount ${LDEV}p${mmcbootpart} mnt/BPI-BOOT
 if [[ $? -ne 0 ]];then echo "mounting BPI-BOOT failed"; exit 1; fi
-mkdir -p mnt/BPI-BOOT/${ubootconfigdir}
-touch mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+sudo mkdir -p mnt/BPI-BOOT/${ubootconfigdir}
+sudo touch mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 sudo mount ${LDEV}p${mmcrootpart} mnt/BPI-ROOT
 if [[ $? -ne 0 ]];then echo "mounting BPI-ROOT failed"; exit 1; fi
 echo "unpack rootfs to bpi-root loopdev..."
