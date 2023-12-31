@@ -30,7 +30,7 @@ case "$board" in
 		mmcrootpart=3
 		arch="arm64"
 	;;
-	"bpi-r3")
+	"bpi-r3"|"bpi-r4")
 		mmcdev=0
 		mmcbootpart=5
 		mmcrootpart=6
@@ -55,7 +55,7 @@ done
 if [ ${PACKAGE_Error} == 1 ]; then return 1; fi
 
 
-LDEV=`losetup -f`
+LDEV=`sudo losetup -f`
 
 function cleanup() {
 	sudo umount mnt/BPI-BOOT
@@ -89,16 +89,18 @@ ls -lh ${imgfile}
 if [[ $? -ne 0 ]];then echo "bootloader file missing"; exit 1; fi
 ls -lh ${distro}_${arch}.tar.gz
 if [[ $? -ne 0 ]];then echo "rootfs file missing"; exit 1; fi
-ls -lh ${kernelfile}
-if [[ $? -ne 0 ]];then echo "kernel file missing"; exit 1; fi
 
+if [[ -z "${kernelfile}" ]];then
+	kernel="nokernel"
+fi
 newimgfile=${board}_${distro}_${kernel}.img.gz
+
 cp $imgfile $newimgfile
 echo "unpack imgfile..."
 gunzip $newimgfile
 echo "setting up imgfile to loopdev..."
 sudo losetup ${LDEV} ${newimgfile%.*} 1> /dev/null
-if [[ $? -ne 0 ]];then echo "losetup failed"; exit 1; fi
+if [[ $? -ne 0 ]];then echo "losetup ${LDEV} failed (${newimgfile%.*})"; exit 1; fi
 echo "mounting loopdev..."
 sudo partprobe ${LDEV}
 if [[ $? -ne 0 ]];then echo "partprobe failed"; exit 1; fi
@@ -109,11 +111,18 @@ sudo mount ${LDEV}p${mmcrootpart} mnt/BPI-ROOT
 if [[ $? -ne 0 ]];then echo "mounting BPI-ROOT failed"; exit 1; fi
 echo "unpack rootfs to bpi-root loopdev..."
 sudo tar -xzf ${distro}_${arch}.tar.gz -C mnt/BPI-ROOT
-echo "unpack kernel to bpi-boot loopdev..."
-sudo tar -xzf $kernelfile --strip-components=1 -C mnt/BPI-BOOT BPI-BOOT
-ls -lR mnt/BPI-BOOT
-echo "unpack kernel-modules to bpi-root loopdev..."
-sudo tar -xzf $kernelfile --strip-components=2 -C mnt/BPI-ROOT/lib/. BPI-ROOT/lib/
+
+if [[ -n "${kernelfile}" ]];then
+	ls -lh ${kernelfile}
+	if [[ $? -ne 0 ]];then echo "kernel file missing"; exit 1; fi
+	echo "unpack kernel to bpi-boot loopdev..."
+	sudo tar -xzf $kernelfile --strip-components=1 -C mnt/BPI-BOOT BPI-BOOT
+	ls -lR mnt/BPI-BOOT
+	echo "unpack kernel-modules to bpi-root loopdev..."
+	sudo tar -xzf $kernelfile --strip-components=2 -C mnt/BPI-ROOT/lib/. BPI-ROOT/lib/
+else
+	echo "kernelfile is empty so it will be missing in resulting image..."
+fi
 
 if [[ "$board" == "bpi-r2pro" ]];then
 	conffile=mnt/BPI-BOOT/extlinux/extlinux.conf
