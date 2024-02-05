@@ -54,7 +54,7 @@ for package in $NEEDED_PKGS; do
 	TESTPKG=$(echo "$PACKAGES" |grep "^${package}")
 	if [[ -z "${TESTPKG}" ]];then echo "please install ${package}";PACKAGE_Error=1;fi
 done
-if [ ${PACKAGE_Error} == 1 ]; then return 1; fi
+if [ ${PACKAGE_Error} == 1 ]; then exit 1; fi
 
 
 LDEV=`sudo losetup -f`
