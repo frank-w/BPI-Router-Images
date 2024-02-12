@@ -94,11 +94,13 @@ if [[ $? -ne 0 ]];then echo "rootfs file missing"; exit 1; fi
 
 if [[ -z "${kernelfile}" ]];then
 	kernel="nokernel"
+else
+	kernel=$(echo ${kernelfile}|sed -e 's/^.*_\(.*\).tar.gz/\1/')
 fi
 newimgfile=${board}_${distro}_${kernel}.img.gz
 
 cp $imgfile $newimgfile
-echo "unpack imgfile..."
+echo "unpack imgfile ($newimgfile)..."
 gunzip $newimgfile
 echo "setting up imgfile to loopdev..."
 sudo losetup ${LDEV} ${newimgfile%.*} 1> /dev/null
