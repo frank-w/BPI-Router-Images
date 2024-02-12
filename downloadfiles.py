@@ -81,7 +81,7 @@ if krj:
             branch=re.sub('^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
             #print("branch:",branch)
             rel["body"]=""
-            if branch=='5.15-main' or branch=='6.1-main': #catch 5.15 for r2 for internal wifi-support
+            if branch == kernel+'-main':
                 #print("kernel-release",kname)
                 if not branch in kfiles:
                     rdata={}
