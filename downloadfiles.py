@@ -113,7 +113,11 @@ if board and board in ubootfiles:
     else: print(f"kernel not set!")
 else: print(f"{board} not found in ubootfiles")
 
-if ufile:
+if config and config.get("skipubootdownload"):
+    with open(conffile, 'a') as f:
+        f.write("skipubootdownload="+config.get("skipubootdownload")+'\n')
+        f.write("imgfile="+config.get("imgfile")+'\n')
+elif ufile:
     a = urlparse(ufile)
     fname=os.path.basename(a.path)
     print(f"ubootfile: {ufile} filename: {fname}")
