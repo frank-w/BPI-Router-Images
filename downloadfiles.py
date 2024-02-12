@@ -113,10 +113,10 @@ if board and board in ubootfiles:
     else: print(f"kernel not set!")
 else: print(f"{board} not found in ubootfiles")
 
+newconfig={}
 if config and config.get("skipubootdownload"):
-    with open(conffile, 'a') as f:
-        f.write("skipubootdownload="+config.get("skipubootdownload")+'\n')
-        f.write("imgfile="+config.get("imgfile")+'\n')
+    newconfig["skipubootdownload"]=config.get("skipubootdownload")
+    newconfig["imgfile"]=config.get("imgfile")
 elif ufile:
     a = urlparse(ufile)
     fname=os.path.basename(a.path)
@@ -127,14 +127,12 @@ elif ufile:
     else: c='y'
     if c=='y':
         download(ufile,fname)
-    with open(conffile, 'w') as f:
-        f.write("imgfile="+fname+'\n')
+    newconfig["imgfile"]=fname
 else: print("no uboot image defined!")
 
 if config and config.get("skipkerneldownload"):
-    with open(conffile, 'a') as f:
-        f.write("skipkerneldownload="+config.get("skipkerneldownload")+'\n')
-        f.write("kernelfile="+config.get("kernelfile")+'\n')
+    newconfig["skipkerneldownload"]=config.get("skipkerneldownload")
+    newconfig["kernelfile"]=config.get("kernelfile")
 elif kfile:
     a = urlparse(kfile)
     fname=os.path.basename(a.path)
@@ -142,6 +140,10 @@ elif kfile:
     if not os.path.isfile(fname):
         download(kfile,fname)
     else: print(fname,"already exists")
-    with open(conffile, 'a') as f:
-        f.write("kernelfile="+fname+'\n')
+    newconfig["kernelfile"]=fname
 else: print("no kernel defined!")
+
+with open(conffile, 'w') as f:
+    for d in newconfig:
+        s=d+'='+newconfig[d]
+        f.write(s+'\n')
