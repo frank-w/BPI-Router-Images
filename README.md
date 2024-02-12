@@ -7,6 +7,27 @@
 ./buildimg.sh bpi-r3 bookworm
 ```
 
+## use own uboot/kernel files
+
+for boards not yet supported by my u-boot/kernel pipeline
+or for emmc it may be needed to use own compiled packages.
+
+the buildimg.sh reads a configfile named sourcefiles_board.conf where 'board'
+is the supplied board name (e.g. "bpi-r4").
+
+to use your own compiled uboot base-image (created by "build.sh createimg" in my uboot repo)
+use this setting:
+```
+skipubootdownload=1
+imgfile=bpi-r4_sdmmc.img.gz
+```
+for own kernel-package (created by "build.sh pack" in my kernel repo) use this:
+```
+skipkerneldownload=1
+kernelfile=bpi-r4_6.5.0-rc1.tar.gz
+```
+both configs can be used together to not download anything from my github releases.
+
 ## how to write image
 
 ```sh
