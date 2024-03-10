@@ -27,6 +27,13 @@ jobs:
           key: ${{ runner.os }}-chroot
           restore-keys: ${{ runner.os }}-chroot
 
+      - name: Acquire Google access token for file download
+        id: google-access-token
+        uses: playeveryware/action-google-access-token@v1
+        with:
+          credentials: ${{ secrets.CREDENTIALS }}
+          scope: 'https://www.googleapis.com/auth/drive.readonly'
+
       - name: Install depencies
         run: |
           sudo apt update
@@ -43,6 +50,18 @@ jobs:
       - name: Build R3 Debian ${{ env.DISTRO }} Image
         run: |
           ./buildimg.sh bpi-r3 ${{ env.DISTRO }}
+
+      - name: Download BPI-R4 kernel file
+        uses: playeveryware/action-google-drive-download@v1
+        with:
+          token: ${{ steps.google-access-token.outputs.token }}
+          file-id: 12u0af8eUu-ATqse4-Qg5cTYfe2XXtwQu
+          path: bpi-r4-kernel.tar.gz
+
+      - name: Build R4 Debian ${{ env.DISTRO }} Image
+        run: |
+          echo -e "skipkerneldownload=1\nkernelfile=bpi-r4-kernel.tar.gz" > sourcefiles_bpi-r4.conf
+          ./buildimg.sh bpi-r4 ${{ env.DISTRO }}
 
       #- name: Upload to Google Drive
       #  uses: Jodebu/upload-to-drive@master
