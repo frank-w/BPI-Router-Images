@@ -52,6 +52,8 @@ kernel_releases_url="https://api.github.com/repos/frank-w/BPI-Router-Linux/relea
 uboot_data=download(uboot_release_url)
 uj=json.loads(uboot_data)
 
+boardpattern='^(bpi-r[2346]+(pro|mini)?).*$'
+
 if uj:
     ubootfiles={}
     uname=uj.get("name")
@@ -62,7 +64,7 @@ if uj:
         ufname=uf.get("name")
         if ufname.endswith("img.gz"):
             ufurl=uf.get("browser_download_url")
-            board_=re.sub('^(bpi-r[2346pro]+).*$',r'\1',ufname)
+            board_=re.sub(boardpattern,r'\1',ufname)
             #print(board,ufurl)
             ubootfiles[board_]=ufurl
             #print("file:",json.dumps(uf,indent=2))
@@ -88,7 +90,7 @@ if krj:
                     for kf in rel.get("assets"):
                         kfname=kf.get("name")
                         if re.search("^bpi-r.*\.tar.gz$",kfname):
-                            board_=re.sub('^(bpi-r[2346pro]+).*$',r'\1',kfname)
+                            board_=re.sub(boardpattern,r'\1',kfname)
                             #if not board in rdata:
                             #    rdata[board]={}
                             #rdata[board][kfname]=kf.get("browser_download_url")
