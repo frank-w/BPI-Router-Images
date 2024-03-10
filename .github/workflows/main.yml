@@ -36,9 +36,9 @@ jobs:
         run: |
           ./buildimg.sh bpi-r64 ${{ env.DISTRO }}
 
-      #- name: Build R2Pro Debian Bookworm Image
-      #  run: |
-      #    ./buildimg.sh bpi-r2pro bookworm
+      - name: Build R2Pro Debian ${{ env.DISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2pro ${{ env.DISTRO }}
 
       - name: Build R3 Debian ${{ env.DISTRO }} Image
         run: |
