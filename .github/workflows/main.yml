@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'gdrive-test'
+  workflow_dispatch:
 
 jobs:
   gdrive-upload:
@@ -13,24 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      #- name: Archive files
-      #  run: |
-      #    sudo apt-get update
-      #    sudo apt-get install zip
-      #    zip -r archive.zip *
+      - name: Install depencies
+        run: |
+          sudo apt update
+          sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
 
-      #- name: Upload to gdrive
-      #  uses: mathisve/gdrive-upload-action@main
-      #  with:
-      #    filename: archive.zip
-      #    name: documentation.zip
-      #    folderId: ${{ secrets.FOLDERID }}
-      #    credentials: ${{ secrets.CREDENTIALS }}
-      #    encoded: false
+      - name: build R3 Debian Bookworm Image
+        run: |
+          ./buildimg.sh bpi-r3 bookworm
+          mkdir bpi-r3
+          mv *.img.gz bpi-r3
 
-      - name: Upload README.md to Google Drive
+      - name: Upload to Google Drive
         uses: Jodebu/upload-to-drive@master
         with:
-          target: README.md
+          target: bpi-r3
           credentials: ${{ secrets.CREDENTIALS }}
           folder: ${{ secrets.FOLDERID }}
