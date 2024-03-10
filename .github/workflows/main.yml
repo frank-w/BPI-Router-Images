@@ -14,16 +14,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup env
+        run: |
+          echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
+          echo "DISTRO=bookworm" >> $GITHUB_ENV
+
       - name: Install depencies
         run: |
           sudo apt update
           sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
 
-      - name: build R3 Debian Bookworm Image
+      - name: Build R64 Debian Bookworm Image
         run: |
-          ./buildimg.sh bpi-r3 bookworm
-          #mkdir bpi-r3
-          #mv *.img.gz bpi-r3
+          ./buildimg.sh bpi-r64 ${{ env.DISTRO }}
+
+      #- name: Build R2Pro Debian Bookworm Image
+      #  run: |
+      #    ./buildimg.sh bpi-r2pro bookworm
+
+      - name: Build R3 Debian Bookworm Image
+        run: |
+          ./buildimg.sh bpi-r3 ${{ env.DISTRO }}
 
       #- name: Upload to Google Drive
       #  uses: Jodebu/upload-to-drive@master
