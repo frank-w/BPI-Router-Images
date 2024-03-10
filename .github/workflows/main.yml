@@ -31,7 +31,7 @@ jobs:
         id: google-access-token
         uses: playeveryware/action-google-access-token@v1
         with:
-          credentials: ${{ secrets.CREDENTIALS }}
+          credentials: ${{ secrets.CREDENTIALS_RAW }}
           scope: 'https://www.googleapis.com/auth/drive.readonly'
 
       - name: Install depencies
