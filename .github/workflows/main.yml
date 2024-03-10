@@ -24,7 +24,7 @@ jobs:
           sudo apt update
           sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
 
-      - name: Build R64 Debian Bookworm Image
+      - name: Build R64 Debian ${{ env.DISTRO }} Image
         run: |
           ./buildimg.sh bpi-r64 ${{ env.DISTRO }}
 
@@ -32,7 +32,7 @@ jobs:
       #  run: |
       #    ./buildimg.sh bpi-r2pro bookworm
 
-      - name: Build R3 Debian Bookworm Image
+      - name: Build R3 Debian ${{ env.DISTRO }} Image
         run: |
           ./buildimg.sh bpi-r3 ${{ env.DISTRO }}
 
