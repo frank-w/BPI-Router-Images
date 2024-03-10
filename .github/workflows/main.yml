@@ -22,12 +22,20 @@ jobs:
       - name: build R3 Debian Bookworm Image
         run: |
           ./buildimg.sh bpi-r3 bookworm
-          mkdir bpi-r3
-          mv *.img.gz bpi-r3
+          #mkdir bpi-r3
+          #mv *.img.gz bpi-r3
 
-      - name: Upload to Google Drive
-        uses: Jodebu/upload-to-drive@master
+      #- name: Upload to Google Drive
+      #  uses: Jodebu/upload-to-drive@master
+      #  with:
+      #    target: bpi-r3
+      #    credentials: ${{ secrets.CREDENTIALS }}
+      #    folder: ${{ secrets.FOLDERID }}
+
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
         with:
-          target: bpi-r3
           credentials: ${{ secrets.CREDENTIALS }}
-          folder: ${{ secrets.FOLDERID }}
+          filename: "*.img.gz"
+          folderId: ${{ secrets.FOLDERID }}
+          overwrite: "true" # optional boolean
