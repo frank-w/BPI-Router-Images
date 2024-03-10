@@ -7,15 +7,19 @@ import re
 
 board=None
 kernel=None
+device="sdmmc"
 
 argc=len(sys.argv)-1
 if argc>0:
     board=sys.argv[1]
     if argc>1:
         kernel=sys.argv[2]
+    if argc>2:
+        device=sys.argv[3]
 
 print(f"board  : {board}")
 print(f"kernel : {kernel}")
+print(f"device : {device}")
 
 def read_settings(infile):
     config={}
