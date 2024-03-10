@@ -1,0 +1,36 @@
+# .github/workflows/main.yml
+name: Main
+on:
+  push:
+    branches:
+      - 'main'
+      - 'gdrive-test'
+
+jobs:
+  gdrive-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      #- name: Archive files
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install zip
+      #    zip -r archive.zip *
+
+      #- name: Upload to gdrive
+      #  uses: mathisve/gdrive-upload-action@main
+      #  with:
+      #    filename: archive.zip
+      #    name: documentation.zip
+      #    folderId: ${{ secrets.FOLDERID }}
+      #    credentials: ${{ secrets.CREDENTIALS }}
+      #    encoded: false
+
+      - name: Upload README.md to Google Drive
+        uses: Jodebu/upload-to-drive@master
+        with:
+          target: README.md
+          credentials: ${{ secrets.CREDENTIALS }}
+          folder: ${{ secrets.FOLDERID }}
