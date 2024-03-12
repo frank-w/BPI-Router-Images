@@ -18,6 +18,7 @@ jobs:
         run: |
           echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
           echo "DISTRO=bookworm" >> $GITHUB_ENV
+          echo "R4Kernel=bpi-r4_6.8.0-rc7-dango_2.tar.gz" >> $GITHUB_ENV
 
       - name: Setup cache
         id: cache
@@ -39,7 +40,7 @@ jobs:
         with:
           token: ${{ steps.google-access-token.outputs.token }}
           file-id: 14IPr6_h0_NEe8ute6HXMUNACnHiaaab4
-          path: bpi-r4-kernel.tar.gz
+          path: ${{ env.R4Kernel }}
         #uses: satackey/action-google-drive@v1
         #with:
         #  skicka-tokencache-json: ${{ secrets.CREDENTIALS_RAW }}
@@ -65,7 +66,7 @@ jobs:
 
       - name: Build R4 Debian ${{ env.DISTRO }} Image
         run: |
-          echo -e "skipkerneldownload=1\nkernelfile=bpi-r4-kernel.tar.gz" > sourcefiles_bpi-r4.conf
+          echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.DISTRO }}
 
       #- name: Upload to Google Drive
