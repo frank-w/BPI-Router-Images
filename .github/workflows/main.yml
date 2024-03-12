@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
           echo "DISTRO=bookworm" >> $GITHUB_ENV
-          echo "R4Kernel=bpi-r4_6.8.0-rc7-dango_2.tar.gz" >> $GITHUB_ENV
+          echo "R4Kernel=bpi-r4_6.8.0-rc7-dango2.tar.gz" >> $GITHUB_ENV
 
       - name: Setup cache
         id: cache
@@ -80,6 +80,6 @@ jobs:
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
-          filename: "*.img.gz"
+          filename: "*${{ env.DISTRO }}*.img.gz"
           folderId: ${{ secrets.FOLDERID }}
           overwrite: "true" # optional boolean
