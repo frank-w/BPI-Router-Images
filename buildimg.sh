@@ -220,3 +220,5 @@ gzip ${newimgfile%.*}
 md5sum ${newimgfile} > ${newimgfile}.md5
 echo "install it this way:"
 echo "gunzip -c ${newimgfile} | sudo dd bs=1M status=progress conv=notrunc,fsync of=/dev/sdX"
+
+rm $imgfile
