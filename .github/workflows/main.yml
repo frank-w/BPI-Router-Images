@@ -70,13 +70,20 @@ jobs:
           echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.DISTRO }}
 
+      - name: Build R64 Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r64 ${{ env.UDISTRO }}
+
+      - name: Build R2Pro Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2pro ${{ env.UDISTRO }}
+
       - name: Build R3 Ubuntu ${{ env.UDISTRO }} Image
         run: |
           ./buildimg.sh bpi-r3 ${{ env.UDISTRO }}
 
       - name: Build R4 Ubuntu ${{ env.UDISTRO }} Image
         run: |
-          echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.UDISTRO }}
 
       #- name: Upload to Google Drive
