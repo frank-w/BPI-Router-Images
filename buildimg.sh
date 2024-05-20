@@ -47,7 +47,7 @@ if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
 
 PACKAGE_Error=0
 PACKAGES=$(dpkg -l | awk '{print $2}')
-NEEDED_PKGS="python3 parted qemu-user-static debootstrap binfmt-support"
+NEEDED_PKGS="python3 python3-requests parted qemu-user-static debootstrap binfmt-support"
 echo "needed: $NEEDED_PKGS"
 for package in $NEEDED_PKGS; do
 	#TESTPKG=$(dpkg -l |grep "\s${package}")
