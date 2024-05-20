@@ -8,7 +8,7 @@ name=debian
 distro=bookworm
 
 #ubuntu
-distro_ubuntu=(focal jammy)
+distro_ubuntu=(focal jammy noble)
 #name=ubuntu
 #distro=jammy #22.04
 
