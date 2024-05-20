@@ -53,6 +53,10 @@ jobs:
           sudo apt update
           sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
 
+      - name: Build R2 Debian ${{ env.DISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2 ${{ env.DISTRO }}
+
       - name: Build R64 Debian ${{ env.DISTRO }} Image
         run: |
           ./buildimg.sh bpi-r64 ${{ env.DISTRO }}
@@ -69,6 +73,10 @@ jobs:
         run: |
           echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.DISTRO }}
+
+      - name: Build R2 Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2 ${{ env.UDISTRO }}
 
       - name: Build R64 Ubuntu ${{ env.UDISTRO }} Image
         run: |
