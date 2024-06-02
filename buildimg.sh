@@ -43,6 +43,10 @@ case "$board" in
 	;;
 esac
 
+if [[  "$board" == "bpi-r4"]] then
+	kernel="6.9" #r4 does not have LTS support yet
+fi
+
 if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
 
 PACKAGE_Error=0
