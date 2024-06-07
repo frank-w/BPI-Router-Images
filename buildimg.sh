@@ -43,7 +43,7 @@ case "$board" in
 	;;
 esac
 
-if [[  "$board" == "bpi-r4"]] then
+if [[  "$board" == "bpi-r4" ]]; then
 	kernel="6.9" #r4 does not have LTS support yet
 fi
 
