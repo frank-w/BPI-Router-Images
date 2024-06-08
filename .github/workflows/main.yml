@@ -19,7 +19,7 @@ jobs:
           echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
           echo "DISTRO=bookworm" >> $GITHUB_ENV
           echo "UDISTRO=noble" >> $GITHUB_ENV
-          echo "R4Kernel=bpi-r4_6.8.0-rc7-dango2.tar.gz" >> $GITHUB_ENV
+          #echo "R4Kernel=bpi-r4_6.8.0-rc7-dango2.tar.gz" >> $GITHUB_ENV
 
       - name: Setup cache
         id: cache
@@ -29,19 +29,19 @@ jobs:
           key: ${{ runner.os }}-chroot
           restore-keys: ${{ runner.os }}-chroot
 
-      - name: Acquire Google access token for file download
-        id: google-access-token
-        uses: playeveryware/action-google-access-token@v1
-        with:
-          credentials: ${{ secrets.CREDENTIALS_RAW }}
-          scope: 'https://www.googleapis.com/auth/drive.readonly'
+      #- name: Acquire Google access token for file download
+      #  id: google-access-token
+      #  uses: playeveryware/action-google-access-token@v1
+      #  with:
+      #    credentials: ${{ secrets.CREDENTIALS_RAW }}
+      #    scope: 'https://www.googleapis.com/auth/drive.readonly'
 
-      - name: Download BPI-R4 kernel file
-        uses: playeveryware/action-google-drive-download@v1
-        with:
-          token: ${{ steps.google-access-token.outputs.token }}
-          file-id: 14IPr6_h0_NEe8ute6HXMUNACnHiaaab4
-          path: ${{ env.R4Kernel }}
+      #- name: Download BPI-R4 kernel file
+      #  uses: playeveryware/action-google-drive-download@v1
+      #  with:
+      #    token: ${{ steps.google-access-token.outputs.token }}
+      #    file-id: 14IPr6_h0_NEe8ute6HXMUNACnHiaaab4
+      #    path: ${{ env.R4Kernel }}
         #uses: satackey/action-google-drive@v1
         #with:
         #  skicka-tokencache-json: ${{ secrets.CREDENTIALS_RAW }}
@@ -71,7 +71,7 @@ jobs:
 
       - name: Build R4 Debian ${{ env.DISTRO }} Image
         run: |
-          echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
+          #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.DISTRO }}
 
       - name: Build R2 Ubuntu ${{ env.UDISTRO }} Image
