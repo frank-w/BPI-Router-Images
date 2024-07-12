@@ -4,7 +4,7 @@ Description=Connect DSL
 After=network.target
 
 [Service]
-Type=exec
+Type=forking
 ExecStart=/usr/sbin/pppd call provider
 StandardOutput=null
 
