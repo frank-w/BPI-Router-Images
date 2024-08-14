@@ -164,6 +164,8 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd iw xz-utils"
 fi
 
+sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y nftables ${additional_pkgs}"
+
 sudo cp -r conf/generic/* ${targetdir}/
 if [[ -e conf/$board ]];then
 	sudo rsync -av --partial --progress --exclude={'bin','lib','sbin'} conf/${board}/. ${targetdir}/
