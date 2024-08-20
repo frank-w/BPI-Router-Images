@@ -214,6 +214,18 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	if [[ ${board} == "bpi-r64" ]];then
 		echo "mt7615e" | sudo tee -a ${targetdir}/etc/modules
 	fi
+
+	if [[ ${board} == "bpi-r4" ]];then
+		#copy wifi-firmware to image
+		fwdir=${targetdir}/lib/firmware/mediatek/mt7996/
+		sudo mkdir -p $fwdir
+		for f in mt7996_dsp.bin mt7996_eeprom_233.bin mt7996_rom_patch_233.bin mt7996_wa_233.bin mt7996_wm_233.bin;
+		do
+			src="https://github.com/frank-w/BPI-Router-Linux/raw/6.10-main/utils/firmware/mediatek/mt7996/$f";
+			sudo curl -L --create-dirs -O --output-dir $fwdir $src
+		done
+		sudo ls -lRh $fwdir
+	fi
 fi
 
 #install/start resolved after all is done
