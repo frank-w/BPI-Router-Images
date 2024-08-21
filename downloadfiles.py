@@ -84,7 +84,7 @@ if krj:
         kname=rel.get("name")
 
         if re.search('CI-BUILD-.*-main',kname):
-            branch=re.sub('^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
+            branch=re.sub(r'^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
             #print("branch:",branch)
             rel["body"]=""
             if branch == kernel+'-main':
@@ -93,7 +93,7 @@ if krj:
                     rdata={}
                     for kf in rel.get("assets"):
                         kfname=kf.get("name")
-                        if re.search("^bpi-r.*\.tar.gz$",kfname):
+                        if re.search(r"^bpi-r.*\.tar.gz$",kfname):
                             board_=re.sub(boardpattern,r'\1',kfname)
                             #if not board in rdata:
                             #    rdata[board]={}
