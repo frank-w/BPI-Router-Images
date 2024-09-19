@@ -8,7 +8,7 @@ name=debian
 distro=bookworm
 
 #ubuntu
-distro_ubuntu=(focal jammy)
+distro_ubuntu=(focal jammy noble)
 #name=ubuntu
 #distro=jammy #22.04
 
@@ -140,6 +140,9 @@ fi
 
 sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y openssh-server"
 echo 'PermitRootLogin=yes'| sudo tee -a $targetdir/etc/ssh/sshd_config
+
+sudo chroot $targetdir bash -c "cd /home/spr; git clone --depth 1 https://github.com/spr-networks/super/"
+# TBD run setup.sh and so on
 
 echo 'bpi'| sudo tee $targetdir/etc/hostname
 

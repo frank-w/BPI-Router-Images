@@ -51,7 +51,7 @@ def download(url, file_name=None):
         return response.content
 
 uboot_release_url="https://api.github.com/repos/frank-w/u-boot/releases/latest"
-kernel_releases_url="https://api.github.com/repos/frank-w/BPI-Router-Linux/releases"
+kernel_releases_url="https://api.github.com/repos/spr-networks/BPI-Router-Linux-spr/releases"
 
 uboot_data=download(uboot_release_url)
 uj=json.loads(uboot_data)
