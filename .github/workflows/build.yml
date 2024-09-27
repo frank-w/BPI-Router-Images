@@ -72,7 +72,6 @@ jobs:
           curl -L -O https://github.com/spr-networks/BPI-Router-Linux-spr/releases/download/CI-BUILD-6.9-main-6.9.0-2024-09-19_1624/bpi-r3_6.9.0-main.tar.gz
           ./buildimg.sh bpi-r3 noble
       - name: Upload binaries to release
-        if: endsWith(github.ref,'-main')
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
