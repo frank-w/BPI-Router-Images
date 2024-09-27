@@ -16,7 +16,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
   id-token: write
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
