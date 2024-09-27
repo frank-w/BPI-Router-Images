@@ -33,10 +33,13 @@ jobs:
         with:
           fetch-depth: 10
 
-      - name: Install depencies
+      - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install ccache libssl-dev u-boot-tools python3-mako debhelper fakeroot gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu make device-tree-compiler libncurses5-dev libelf-dev
+          sudo apt install ccache libssl-dev u-boot-tools python3-mako debhelper fakeroot gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu make device-tree-compiler libncurses5-dev libelf-dev python3 python3-requests parted qemu-user-static debootstrap binfmt-support
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Setup env
         run: |
