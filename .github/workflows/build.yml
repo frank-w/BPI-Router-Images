@@ -69,7 +69,6 @@ jobs:
         run: |
           sudo apt install gcc-arm-linux-gnueabihf libc6-armhf-cross u-boot-tools bc make ccache gcc libc6-dev libncurses5-dev libssl-dev bison flex
           sudo apt install gcc-aarch64-linux-gnu u-boot-tools bc make gcc ccache libc6-dev libncurses5-dev libssl-dev bison flex curl
-          curl -L -O https://github.com/spr-networks/BPI-Router-Linux-spr/releases/download/CI-BUILD-6.9-main-6.9.0-2024-09-19_1624/bpi-r3_6.9.0-main.tar.gz
           ./buildimg.sh bpi-r3 noble
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
