@@ -6,7 +6,7 @@
 #r3: dev: 0 part: 5/6
 board=$1
 distro=$2 #buster|bullseye|jammy
-kernel="6.6"
+kernel="6.9"
 
 LANG=C
 ubootconfig=uEnv.txt
