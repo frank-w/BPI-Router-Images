@@ -44,7 +44,8 @@ case "$board" in
 esac
 
 if [[  "$board" == "bpi-r4" ]]; then
-	kernel="6.10" #r4 does not have LTS support yet
+	kernel="6.11" #r4 does not have LTS support yet
+	echo "replacehostapd=1" >> sourcefiles_${board}.conf
 fi
 
 if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
@@ -194,6 +195,12 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		#add wifi.sh to rc.local (autostart)
 		sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
 	else
+		if [[ -n "$replacehostapd" ]];then
+			tar -tzf $hostapdfile #currently only show content
+			echo "unpack hostapd to bpi-root loopdev..."
+			sudo tar -xzf $hostapdfile -C mnt/BPI-ROOT/usr/local/sbin/
+			ls -lh mnt/BPI-ROOT/usr/local/sbin/
+		fi
 		sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
 	fi
 	#copy firmware

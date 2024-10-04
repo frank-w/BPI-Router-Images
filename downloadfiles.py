@@ -52,6 +52,7 @@ def download(url, file_name=None):
 
 uboot_release_url="https://api.github.com/repos/frank-w/u-boot/releases/latest"
 kernel_releases_url="https://api.github.com/repos/frank-w/BPI-Router-Linux/releases"
+bin_releases_url="https://api.github.com/repos/frank-w/arm-crosscompile/releases"
 
 uboot_data=download(uboot_release_url)
 uj=json.loads(uboot_data)
@@ -103,6 +104,24 @@ if krj:
             #print("release-data:",json.dumps(rel,indent=2))
     #print("files:",json.dumps(kfiles,indent=2))
 
+bin_releases=download(bin_releases_url)
+brj=json.loads(bin_releases)
+
+if brj:
+    bfiles={}
+    for rel in brj:
+        bname=rel.get("name")
+
+        for f in rel.get("assets"):
+            fname=f.get("name")
+
+            if not fname in bfiles:
+                if re.search(r"^(hostapd|iproute2).*\.tar.gz$",fname):
+                    #fn=re.sub(boardpattern,r'\1',kfname)
+                    bfiles[fname]=f.get("browser_download_url")
+
+print("binfiles:",bfiles)
+
 ufile=None
 kfile=None
 
@@ -148,6 +167,23 @@ elif kfile:
     else: print(fname,"already exists")
     newconfig["kernelfile"]=fname
 else: print("no kernel defined!")
+
+
+if config and config.get("replacehostapd"):
+    newconfig["replacehostapd"]=config.get("replacehostapd")
+
+    if bfiles:
+        hostapdfile=bfiles.get("hostapd_arm64.tar.gz")
+        a = urlparse(hostapdfile)
+        fname=os.path.basename(a.path)
+        print(f"hostapdfile: {hostapdfile} filename: {fname}")
+        if not os.path.isfile(fname):
+            download(hostapdfile,fname)
+        else: print(fname,"already exists")
+        newconfig["hostapdfile"]=fname
+    else: print("no bfiles defined!")
+
+
 
 with open(conffile, 'w') as f:
     for d in newconfig:
