@@ -238,7 +238,13 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	fi
 fi
 
-#install/start resolved after all is done
+#install userspecified packages
+if [[ -n "$userpackages" ]]; then
+	echo "installing user specified packages: $userpackages"
+	sudo chroot $targetdir bash -c "DEBIAN_FRONTEND=noninteractive apt install -y $userpackages"
+fi
+
+#install/start resolved after all is done (resolving is broken in chroot after that)
 sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
 
 cleanup ${LDEV}

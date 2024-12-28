@@ -168,6 +168,8 @@ elif kfile:
     newconfig["kernelfile"]=fname
 else: print("no kernel defined!")
 
+if config and config.get("userpackages"):
+    newconfig["userpackages"]=config.get("userpackages")
 
 if config and config.get("replacehostapd"):
     newconfig["replacehostapd"]=config.get("replacehostapd")
