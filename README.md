@@ -28,6 +28,14 @@ kernelfile=bpi-r4_6.5.0-rc1.tar.gz
 ```
 both configs can be used together to not download anything from my github releases.
 
+## how add packages
+
+add this option in the sourcefiles_board.conf
+
+```sh
+userpackages="ethtool iperf3 tcpdump"
+```
+
 ## how to write image
 
 ```sh
