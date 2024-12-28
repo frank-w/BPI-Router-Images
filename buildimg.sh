@@ -161,8 +161,10 @@ EOF
 
 echo $board | sudo tee $targetdir/etc/hostname
 
+sudo chroot $targetdir bash -c "apt update; DEBIAN_FRONTEND=noninteractive apt upgrade -y; apt clean"
+
 if [[ ${board} != "bpi-r2pro" ]];then
-	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd iw xz-utils"
+	sudo chroot $targetdir bash -c "apt install --no-install-recommends -y hostapd iw xz-utils"
 fi
 
 sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y nftables ${additional_pkgs}"
