@@ -1,7 +1,6 @@
 # .github/workflows/main.yml
 name: Main
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   gdrive-upload:
