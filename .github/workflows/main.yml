@@ -53,46 +53,47 @@ jobs:
           sudo apt update
           sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
 
-#      - name: Build R2 Debian ${{ env.DISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r2 ${{ env.DISTRO }}
-#
-#      - name: Build R64 Debian ${{ env.DISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r64 ${{ env.DISTRO }}
-#
-#      - name: Build R2Pro Debian ${{ env.DISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r2pro ${{ env.DISTRO }}
-#
-#      - name: Build R3 Debian ${{ env.DISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r3 ${{ env.DISTRO }}
+      - name: Build R2 Debian ${{ env.DISTRO }} Images
+        run: |
+          ./buildimg.sh bpi-r2 ${{ env.DISTRO }}
+          ./buildimg.sh bpi-r2 ${{ env.DISTRO }} 6.12
+
+      - name: Build R64 Debian ${{ env.DISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r64 ${{ env.DISTRO }}
+
+      - name: Build R2Pro Debian ${{ env.DISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2pro ${{ env.DISTRO }}
+
+      - name: Build R3 Debian ${{ env.DISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r3 ${{ env.DISTRO }}
 
       - name: Build R4 Debian ${{ env.DISTRO }} Image
         run: |
           #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.DISTRO }}
 
-#      - name: Build R2 Ubuntu ${{ env.UDISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r2 ${{ env.UDISTRO }}
-#
-#      - name: Build R64 Ubuntu ${{ env.UDISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r64 ${{ env.UDISTRO }}
+      - name: Build R2 Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2 ${{ env.UDISTRO }}
 
-#      - name: Build R2Pro Ubuntu ${{ env.UDISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r2pro ${{ env.UDISTRO }}
+      - name: Build R64 Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r64 ${{ env.UDISTRO }}
 
-#      - name: Build R3 Ubuntu ${{ env.UDISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r3 ${{ env.UDISTRO }}
+      - name: Build R2Pro Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r2pro ${{ env.UDISTRO }}
 
-#      - name: Build R4 Ubuntu ${{ env.UDISTRO }} Image
-#        run: |
-#          ./buildimg.sh bpi-r4 ${{ env.UDISTRO }}
+      - name: Build R3 Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r3 ${{ env.UDISTRO }}
+
+      - name: Build R4 Ubuntu ${{ env.UDISTRO }} Image
+        run: |
+          ./buildimg.sh bpi-r4 ${{ env.UDISTRO }}
 
       #- name: Upload to Google Drive
       #  uses: Jodebu/upload-to-drive@master
