@@ -58,31 +58,31 @@ jobs:
           sudo apt update
           sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
 
-      - name: Build R2 Ubuntu ${{ env.UBUNTU_DIST }} Image
+      - name: Build R2 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r2 }}
         run: |
-          ./buildimg.sh bpi-r2 ${{ env.UBUNTU_DIST }}
-          ./buildimg.sh bpi-r2 ${{ env.UBUNTU_DIST }} 6.12
+          ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }} 6.12
 
-      - name: Build R64 Ubuntu ${{ env.UBUNTU_DIST }} Image
+      - name: Build R64 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r64 }}
         run: |
-          ./buildimg.sh bpi-r64 ${{ env.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r64 ${{ vars.UBUNTU_DIST }}
 
-      - name: Build R2Pro Ubuntu ${{ env.UBUNTU_DIST }} Image
+      - name: Build R2Pro Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r2pro }}
         run: |
-          ./buildimg.sh bpi-r2pro ${{ env.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r2pro ${{ vars.UBUNTU_DIST }}
 
-      - name: Build R3 Ubuntu ${{ env.UBUNTU_DIST }} Image
+      - name: Build R3 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r3 }}
         run: |
-          ./buildimg.sh bpi-r3 ${{ env.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r3 ${{ vars.UBUNTU_DIST }}
 
-      - name: Build R4 Ubuntu ${{ env.UBUNTU_DIST }} Image
+      - name: Build R4 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
         run: |
-          ./buildimg.sh bpi-r4 ${{ env.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r4 ${{ vars.UBUNTU_DIST }}
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
