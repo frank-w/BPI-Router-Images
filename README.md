@@ -3,8 +3,11 @@
 ## examples:
 
 ```sh
-./buildimg.sh bpi-r2 jammy
 ./buildimg.sh bpi-r3 bookworm
+./buildimg.sh bpi-r4 jammy
+
+#use kernel 6.12 for r2 (normally 5.15 is used because of internal wifi support)
+./buildimg.sh bpi-r2 bookworm 6.12
 ```
 
 ## use own uboot/kernel files
