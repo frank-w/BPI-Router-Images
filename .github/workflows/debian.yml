@@ -14,6 +14,8 @@ on:
         type: boolean
       bpi-r4:
         type: boolean
+      packages:
+        description: additional packages (separated by space)
 
 jobs:
   debian-gdrive-upload:
@@ -61,28 +63,33 @@ jobs:
       - name: Build R2 Debian ${{ vars.DEBIAN_DIST }} Images
         if: ${{ inputs.bpi-r2 }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2.conf
           ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }}
           ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }} 6.12
 
       - name: Build R64 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r64 }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r64.conf
           ./buildimg.sh bpi-r64 ${{ vars.DEBIAN_DIST }}
 
       - name: Build R2Pro Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r2pro }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2pro.conf
           ./buildimg.sh bpi-r2pro ${{ vars.DEBIAN_DIST }}
 
       - name: Build R3 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r3 }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3.conf
           ./buildimg.sh bpi-r3 ${{ vars.DEBIAN_DIST }}
 
       - name: Build R4 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
         run: |
           #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ env.DEBIAN_DIST }}
 
       - name: Upload to gdrive
