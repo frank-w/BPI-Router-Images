@@ -1,10 +1,6 @@
 # .github/workflows/main.yml
 name: Main
 on:
-  push:
-    branches:
-      - 'main'
-      - 'gdrive-test'
   workflow_dispatch:
 
 jobs:
