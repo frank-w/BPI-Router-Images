@@ -61,3 +61,11 @@ and restart ssh daemon
 ```sh
 systemctl restart ssh
 ```
+
+ssh host keys should be regenerated
+
+```sh
+/bin/rm -v /etc/ssh/ssh_host_*
+dpkg-reconfigure openssh-server
+systemctl restart ssh
+```
