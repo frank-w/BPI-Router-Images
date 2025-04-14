@@ -226,15 +226,18 @@ if [[ ${board} != "bpi-r2pro" ]];then
 
 	if [[ ${board} == "bpi-r4" ]];then
 		#copy wifi-firmware to image
-		fwdir=${targetdir}/lib/firmware/mediatek/mt7996/
+		fwdir=${targetdir}/lib/firmware/mediatek/
 		sudo mkdir -p $fwdir
-		for f in mt7996_dsp.bin mt7996_eeprom_233.bin mt7996_rom_patch_233.bin mt7996_wa_233.bin mt7996_wm_233.bin;
+		for f in mt7996/mt7996_dsp.bin mt7996/mt7996_eeprom_233.bin mt7996/mt7996_rom_patch_233.bin mt7996/mt7996_wa_233.bin mt7996/mt7996_wm_233.bin mt7988/i2p5ge-phy-pmb.bin;
 		do
-			#src="https://github.com/frank-w/BPI-Router-Linux/raw/6.10-main/utils/firmware/mediatek/mt7996/$f";
-			src="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mediatek/mt7996/$f";
-			sudo curl -L --silent --create-dirs -O --output-dir $fwdir $src
+			src="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mediatek/$f";
+			echo "download $src to $fwdir/$f..."
+			sudo curl -L --silent --create-dirs --output $fwdir/$f $src
 		done
 		sudo ls -lRh $fwdir
+		#changes for 2.5g phy variant
+		echo "# is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
 	fi
 fi
 
