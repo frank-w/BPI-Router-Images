@@ -88,6 +88,6 @@ jobs:
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
-          filename: "*.img.gz"
+          filename: "*.img.gz*"
           folderId: ${{ secrets.FOLDERID }}
           overwrite: "true" # optional boolean
