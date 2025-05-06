@@ -1,0 +1,101 @@
+# .github/workflows/main.yml
+name: Debian
+
+on:
+  workflow_dispatch:
+    inputs:
+      bpi-r2:
+        type: boolean
+      bpi-r64:
+        type: boolean
+      bpi-r2pro:
+        type: boolean
+      bpi-r3:
+        type: boolean
+      bpi-r4:
+        type: boolean
+      packages:
+        description: additional packages (separated by space)
+
+jobs:
+  debian-gdrive-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup env
+        run: |
+          echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
+
+      - name: Setup cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: "*_arm*.tar.gz"
+          key: ${{ runner.os }}-chroot
+          restore-keys: ${{ runner.os }}-chroot
+
+      #- name: Acquire Google access token for file download
+      #  id: google-access-token
+      #  uses: playeveryware/action-google-access-token@v1
+      #  with:
+      #    credentials: ${{ secrets.CREDENTIALS_RAW }}
+      #    scope: 'https://www.googleapis.com/auth/drive.readonly'
+
+      #- name: Download BPI-R4 kernel file
+      #  uses: playeveryware/action-google-drive-download@v1
+      #  with:
+      #    token: ${{ steps.google-access-token.outputs.token }}
+      #    file-id: 14IPr6_h0_NEe8ute6HXMUNACnHiaaab4
+      #    path: ${{ env.R4Kernel }}
+        #uses: satackey/action-google-drive@v1
+        #with:
+        #  skicka-tokencache-json: ${{ secrets.CREDENTIALS_RAW }}
+        #  download-from: https://drive.google.com/file/d/14IPr6_h0_NEe8ute6HXMUNACnHiaaab4/view?usp=drive_link
+        #  download-to: ./bpi-r4-kernel.tar.gz
+
+      - name: Install depencies
+        run: |
+          sudo apt update
+          sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
+
+      - name: Build R2 Debian ${{ vars.DEBIAN_DIST }} Images
+        if: ${{ inputs.bpi-r2 }}
+        run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2.conf
+          ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }}
+          ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }} 6.12
+
+      - name: Build R64 Debian ${{ vars.DEBIAN_DIST }} Image
+        if: ${{ inputs.bpi-r64 }}
+        run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r64.conf
+          ./buildimg.sh bpi-r64 ${{ vars.DEBIAN_DIST }}
+
+      - name: Build R2Pro Debian ${{ vars.DEBIAN_DIST }} Image
+        if: ${{ inputs.bpi-r2pro }}
+        run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2pro.conf
+          ./buildimg.sh bpi-r2pro ${{ vars.DEBIAN_DIST }}
+
+      - name: Build R3 Debian ${{ vars.DEBIAN_DIST }} Image
+        if: ${{ inputs.bpi-r3 }}
+        run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3.conf
+          ./buildimg.sh bpi-r3 ${{ vars.DEBIAN_DIST }}
+
+      - name: Build R4 Debian ${{ vars.DEBIAN_DIST }} Image
+        if: ${{ inputs.bpi-r4 }}
+        run: |
+          #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
+          ./buildimg.sh bpi-r4 ${{ vars.DEBIAN_DIST }}
+
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.CREDENTIALS }}
+          filename: "*.img.gz*"
+          folderId: ${{ secrets.FOLDERID }}
+          overwrite: "true" # optional boolean

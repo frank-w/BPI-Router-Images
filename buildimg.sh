@@ -6,7 +6,7 @@
 #r3: dev: 0 part: 5/6
 board=$1
 distro=$2 #buster|bullseye|jammy
-kernel="6.9"
+kernel="6.12"
 
 LANG=C
 ubootconfig=uEnv.txt
@@ -44,7 +44,8 @@ case "$board" in
 esac
 
 if [[  "$board" == "bpi-r4" ]]; then
-	kernel="6.9" #r4 does not have LTS support yet
+	kernel="6.12"
+	echo "replacehostapd=1" >> sourcefiles_${board}.conf
 fi
 
 if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
@@ -160,8 +161,10 @@ EOF
 
 echo $board | sudo tee $targetdir/etc/hostname
 
+sudo chroot $targetdir bash -c "apt update; DEBIAN_FRONTEND=noninteractive apt upgrade -y; apt clean"
+
 if [[ ${board} != "bpi-r2pro" ]];then
-	sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y hostapd iw xz-utils"
+	sudo chroot $targetdir bash -c "apt install --no-install-recommends -y hostapd iw xz-utils"
 fi
 
 sudo chroot $targetdir bash -c "apt update; apt install --no-install-recommends -y nftables ${additional_pkgs}"
@@ -194,6 +197,12 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		#add wifi.sh to rc.local (autostart)
 		sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
 	else
+		if [[ -n "$replacehostapd" ]];then
+			tar -tzf $hostapdfile #currently only show content
+			echo "unpack hostapd to bpi-root loopdev..."
+			sudo tar -xzf $hostapdfile -C mnt/BPI-ROOT/usr/local/sbin/
+			ls -lh mnt/BPI-ROOT/usr/local/sbin/
+		fi
 		sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
 	fi
 	#copy firmware
@@ -208,15 +217,37 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	curl https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git/plain/regulatory.db.p7s -o regulatory.db.p7s-git
 
 	sudo cp -r regulatory.* ${targetdir}/lib/firmware/
-    sudo chroot $targetdir bash -c "update-alternatives --install /lib/firmware/regulatory.db regulatory.db /lib/firmware/regulatory.db-git 200 --slave /lib/firmware/regulatory.db.p7s regulatory.db.p7s /lib/firmware/regulatory.db.p7s-git"
-    sudo chroot $targetdir bash -c "update-alternatives --set regulatory.db /lib/firmware/regulatory.db-git"
+	sudo chroot $targetdir bash -c "update-alternatives --install /lib/firmware/regulatory.db regulatory.db /lib/firmware/regulatory.db-git 200 --slave /lib/firmware/regulatory.db.p7s regulatory.db.p7s /lib/firmware/regulatory.db.p7s-git"
+	sudo chroot $targetdir bash -c "update-alternatives --set regulatory.db /lib/firmware/regulatory.db-git"
 
 	if [[ ${board} == "bpi-r64" ]];then
 		echo "mt7615e" | sudo tee -a ${targetdir}/etc/modules
 	fi
+
+	if [[ ${board} == "bpi-r4" ]];then
+		#copy wifi-firmware to image
+		fwdir=${targetdir}/lib/firmware/mediatek/
+		sudo mkdir -p $fwdir
+		for f in mt7996/mt7996_dsp.bin mt7996/mt7996_eeprom_233.bin mt7996/mt7996_rom_patch_233.bin mt7996/mt7996_wa_233.bin mt7996/mt7996_wm_233.bin mt7988/i2p5ge-phy-pmb.bin;
+		do
+			src="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mediatek/$f";
+			echo "download $src to $fwdir/$f..."
+			sudo curl -L --silent --create-dirs --output $fwdir/$f $src
+		done
+		sudo ls -lRh $fwdir
+		#changes for 2.5g phy variant
+		echo "# is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
+	fi
 fi
 
-#install/start resolved after all is done
+#install userspecified packages
+if [[ -n "$userpackages" ]]; then
+	echo "installing user specified packages: $userpackages"
+	sudo chroot $targetdir bash -c "DEBIAN_FRONTEND=noninteractive apt install -y $userpackages"
+fi
+
+#install/start resolved after all is done (resolving is broken in chroot after that)
 sudo chroot $targetdir bash -c "apt install -y systemd-resolved;systemctl enable systemd-resolved"
 
 cleanup ${LDEV}

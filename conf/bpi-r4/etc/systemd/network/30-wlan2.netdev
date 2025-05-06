@@ -1,0 +1,11 @@
+#https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#%5BWLAN%5D%20Section%20Options
+#requires version 251
+[NetDev]
+Name=wlan2
+Kind=wlan
+
+[WLAN]
+#PhysicalDevice=wlan0
+PhysicalDevice=phy0
+#Type=managed
+Type=ap

@@ -3,8 +3,11 @@
 ## examples:
 
 ```sh
-./buildimg.sh bpi-r2 jammy
 ./buildimg.sh bpi-r3 bookworm
+./buildimg.sh bpi-r4 jammy
+
+#use kernel 6.12 for r2 (normally 5.15 is used because of internal wifi support)
+./buildimg.sh bpi-r2 bookworm 6.12
 ```
 
 ## use own uboot/kernel files
@@ -28,6 +31,14 @@ kernelfile=bpi-r4_6.5.0-rc1.tar.gz
 ```
 both configs can be used together to not download anything from my github releases.
 
+## how add packages
+
+add this option in the sourcefiles_board.conf
+
+```sh
+userpackages="ethtool iperf3 tcpdump"
+```
+
 ## how to write image
 
 ```sh
@@ -48,5 +59,13 @@ add # before PermitRootLogin=yes
 and restart ssh daemon
 
 ```sh
+systemctl restart ssh
+```
+
+ssh host keys should be regenerated
+
+```sh
+/bin/rm -v /etc/ssh/ssh_host_*
+dpkg-reconfigure openssh-server
 systemctl restart ssh
 ```

@@ -52,6 +52,7 @@ def download(url, file_name=None):
 
 uboot_release_url="https://api.github.com/repos/frank-w/u-boot/releases/latest"
 kernel_releases_url="https://api.github.com/repos/spr-networks/BPI-Router-Linux-spr/releases"
+bin_releases_url="https://api.github.com/repos/frank-w/arm-crosscompile/releases"
 
 uboot_data=download(uboot_release_url)
 uj=json.loads(uboot_data)
@@ -84,7 +85,7 @@ if krj:
         kname=rel.get("name")
 
         if re.search('CI-BUILD-.*-main',kname):
-            branch=re.sub('^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
+            branch=re.sub(r'^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
             #print("branch:",branch)
             rel["body"]=""
             if branch == kernel+'-main':
@@ -93,7 +94,7 @@ if krj:
                     rdata={}
                     for kf in rel.get("assets"):
                         kfname=kf.get("name")
-                        if re.search("^bpi-r.*\.tar.gz$",kfname):
+                        if re.search(r"^bpi-r.*\.tar.gz$",kfname):
                             board_=re.sub(boardpattern,r'\1',kfname)
                             #if not board in rdata:
                             #    rdata[board]={}
@@ -102,6 +103,24 @@ if krj:
                     kfiles[branch]=rdata
             #print("release-data:",json.dumps(rel,indent=2))
     #print("files:",json.dumps(kfiles,indent=2))
+
+bin_releases=download(bin_releases_url)
+brj=json.loads(bin_releases)
+
+if brj:
+    bfiles={}
+    for rel in brj:
+        bname=rel.get("name")
+
+        for f in rel.get("assets"):
+            fname=f.get("name")
+
+            if not fname in bfiles:
+                if re.search(r"^(hostapd|iproute2).*\.tar.gz$",fname):
+                    #fn=re.sub(boardpattern,r'\1',kfname)
+                    bfiles[fname]=f.get("browser_download_url")
+
+print("binfiles:",bfiles)
 
 ufile=None
 kfile=None
@@ -148,6 +167,25 @@ elif kfile:
     else: print(fname,"already exists")
     newconfig["kernelfile"]=fname
 else: print("no kernel defined!")
+
+if config and config.get("userpackages"):
+    newconfig["userpackages"]=config.get("userpackages")
+
+if config and config.get("replacehostapd"):
+    newconfig["replacehostapd"]=config.get("replacehostapd")
+
+    if bfiles:
+        hostapdfile=bfiles.get("hostapd_arm64.tar.gz")
+        a = urlparse(hostapdfile)
+        fname=os.path.basename(a.path)
+        print(f"hostapdfile: {hostapdfile} filename: {fname}")
+        if not os.path.isfile(fname):
+            download(hostapdfile,fname)
+        else: print(fname,"already exists")
+        newconfig["hostapdfile"]=fname
+    else: print("no bfiles defined!")
+
+
 
 with open(conffile, 'w') as f:
     for d in newconfig:
