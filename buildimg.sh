@@ -237,6 +237,7 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		sudo ls -lRh $fwdir
 		#changes for 2.5g phy variant
 		echo "# is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		echo "# isr4pro=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
 	fi
 fi
