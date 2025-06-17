@@ -182,6 +182,22 @@ if [[ -e conf/$board ]];then
 fi
 sudo chroot $targetdir bash -c "systemctl enable systemd-networkd"
 
+function download_firmware()
+{
+	targetdir=$1
+	shift 1 # Removes $1 from the parameter list
+
+	fwdir=${targetdir}/lib/firmware/
+	for f in $@;do
+		src="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/$f";
+		echo "$src => $fwdir/$f"
+		sudo curl -L --silent --create-dirs --output $fwdir/$f $src
+		ret=$?
+		if [[ $ret -ne 0 ]];then return $ret;fi
+	done
+	return 0
+}
+
 #wifi related commands
 if [[ ${board} != "bpi-r2pro" ]];then
 	#fix for ConditionFileNotEmpty in existing hostapd service (can also point to ${DAEMON_CONF})
@@ -225,17 +241,12 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	fi
 
 	if [[ ${board} == "bpi-r4" ]];then
-		#copy wifi-firmware to image
-		fwdir=${targetdir}/lib/firmware/mediatek/
-		sudo mkdir -p $fwdir
-		for f in mt7996/mt7996_dsp.bin mt7996/mt7996_eeprom_233.bin mt7996/mt7996_rom_patch_233.bin mt7996/mt7996_wa_233.bin mt7996/mt7996_wm_233.bin mt7988/i2p5ge-phy-pmb.bin;
-		do
-			src="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mediatek/$f";
-			echo "download $src to $fwdir/$f..."
-			sudo curl -L --silent --create-dirs --output $fwdir/$f $src
-		done
+		#copy actual firmware files to image
+		download_firmware $targetdir mediatek/mt7996/{mt7996_dsp,mt7996_eeprom_233,mt7996_rom_patch_233,mt7996_wa_233,mt7996_wm_233}.bin
+		download_firmware $targetdir mediatek/mt7988/i2p5ge-phy-pmb.bin
+		download_firmware $targetdir aeonsemi/as21x1x_fw.bin
 		sudo ls -lRh $fwdir
-		#changes for 2.5g phy variant
+		#changes for 2.5g phy and R4Pro variant
 		echo "# is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		echo "# isr4pro=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
