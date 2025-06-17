@@ -10,6 +10,13 @@ kernel="6.12"
 
 source config.sh
 
+if [[ ! "$distro" =~ bookworm|noble ]];
+then
+	echo "invalid distribution '$distro'";
+	exit;
+fi
+if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
+
 if [[  "$board" == "bpi-r4" ]]; then
 	echo "replacehostapd=1" >> sourcefiles_${board}.conf
 fi

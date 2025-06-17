@@ -39,9 +39,3 @@ case "$board" in
 		echo "missing/unsupported board $1";exit
 	;;
 esac
-if [[ ! "$distro" =~ bookworm|noble ]];
-then
-	echo "invalid distribution '$distro'";
-	exit;
-fi
-if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
