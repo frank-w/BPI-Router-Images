@@ -4,9 +4,6 @@
 #r64: dev: 1 part: 4/5 (maybe needs fix for root in uboot, boot is checked by checkgpt)
 #r2pro: dev: 1 part: 2/3
 #r3/r4: dev: 0 part: 5/6
-board=$1
-distro=$2 #bookworm|noble
-kernel="6.12"
 
 LANG=C
 ubootconfig=uEnv.txt
