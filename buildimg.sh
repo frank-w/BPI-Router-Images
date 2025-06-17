@@ -4,51 +4,12 @@
 #r64: dev: 1 part: 4/5 (maybe needs fix for root in uboot, boot is checked by checkgpt)
 #r2pro: dev: 1 part: 2/3
 #r3: dev: 0 part: 5/6
-board=$1
-distro=$2 #buster|bullseye|jammy
-kernel="6.12"
 
-LANG=C
-ubootconfig=uEnv.txt
-
-case "$board" in
-	"bpi-r2")
-		mmcdev=0
-		mmcbootpart=1
-		mmcrootpart=2
-		arch="armhf"
-		kernel="5.15" #6.0+ does not support internal wifi
-		ubootconfigdir=/bananapi/$board/linux/
-	;;
-	"bpi-r64")
-		mmcdev=1
-		mmcbootpart=4
-		mmcrootpart=5
-		arch="arm64"
-	;;
-	"bpi-r2pro")
-		mmcdev=0
-		mmcbootpart=2
-		mmcrootpart=3
-		arch="arm64"
-	;;
-	"bpi-r3"|"bpi-r4")
-		mmcdev=0
-		mmcbootpart=5
-		mmcrootpart=6
-		arch="arm64"
-	;;
-	*)
-		echo "missing/unsupported board $1";exit
-	;;
-esac
+source config.sh
 
 if [[  "$board" == "bpi-r4" ]]; then
-	kernel="6.12"
 	echo "replacehostapd=1" >> sourcefiles_${board}.conf
 fi
-
-if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
 
 PACKAGE_Error=0
 PACKAGES=$(dpkg -l | awk '{print $2}')
