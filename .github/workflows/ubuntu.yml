@@ -56,7 +56,7 @@ jobs:
       - name: Install depencies
         run: |
           sudo apt update
-          sudo apt install python3 parted qemu-user-static debootstrap binfmt-support
+          sudo apt install python3 parted qemu-user-static debootstrap binfmt-support mtd-utils
 
       - name: Build R2 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r2 }}
