@@ -212,6 +212,8 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	fi
 
 	if [[ ${board} == "bpi-r4" ]];then
+		#remove lan0 from lanbr0
+		sudo sed 's/lan0 //' ${targetdir}/etc/systemd/network/21-lanbr-bind.network
 		#copy actual firmware files to image
 		download_firmware $targetdir mediatek/mt7996/{mt7996_dsp,mt7996_eeprom_233,mt7996_rom_patch_233,mt7996_wa_233,mt7996_wm_233}.bin
 		download_firmware $targetdir mediatek/mt7988/i2p5ge-phy-pmb.bin
