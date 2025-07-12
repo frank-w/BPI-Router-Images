@@ -50,83 +50,135 @@ def download(url, file_name=None):
     else:
         return response.content
 
-uboot_release_url="https://api.github.com/repos/frank-w/u-boot/releases/latest"
-kernel_releases_url="https://api.github.com/repos/frank-w/BPI-Router-Linux/releases"
-bin_releases_url="https://api.github.com/repos/frank-w/arm-crosscompile/releases"
-
-uboot_data=download(uboot_release_url)
-uj=json.loads(uboot_data)
-
 boardpattern='^(bpi-r[2346]+(pro|mini)?).*$'
 
-if uj:
+def getUbootInfo():
+    uboot_release_url="https://api.github.com/repos/frank-w/u-boot/releases/latest"
+    uboot_data=download(uboot_release_url)
+    uj=json.loads(uboot_data)
+
     ubootfiles={}
-    uname=uj.get("name")
-    #print("name:",uname)
-    ufiles=uj.get("assets")
-    #print("files:",json.dumps(ufiles,indent=2))
-    for uf in ufiles:
-        ufname=uf.get("name")
-        if ufname.endswith("img.gz"):
+    if uj:
+        bl2files={}
+        fipfiles={}
+        uname=uj.get("name")
+        #print("name:",uname)
+        ufiles=uj.get("assets")
+        #print("files:",json.dumps(ufiles,indent=2))
+        for uf in ufiles:
+            #print("file:",json.dumps(uf,indent=2))
+            ufname=uf.get("name")
+            if re.match(r'u-boot.*\.bin',ufname): continue
             ufurl=uf.get("browser_download_url")
             board_=re.sub(boardpattern,r'\1',ufname)
-            #print(board,ufurl)
-            ubootfiles[board_]=ufurl
-            #print("file:",json.dumps(uf,indent=2))
+            device_=re.sub(r'^.*_(sdmmc|emmc|spim-nand|nor|ram).*$',r'\1',ufname)
 
-    #print("files:",json.dumps(ubootfiles,indent=2))
+            if not board_ in ubootfiles:
+                ubootfiles[board_]={}
+            if not device_ in ubootfiles[board_]:
+                ubootfiles[board_][device_]={}
+            if ufname.endswith("img.gz"):
+                ubootfiles[board_][device_]={"name":ufname,"url":ufurl}
+            elif device_=="ram" and ufname.endswith("bl2.bin"):
+                if not "bl2" in ubootfiles[board_][device_]:
+                    ubootfiles[board_][device_]["bl2"]={}
+                if "8GB" in ufname:
+                    if not "8G" in ubootfiles[board_][device_]["bl2"]:
+                        ubootfiles[board_][device_]["bl2"]["8G"]={}
+                    ubootfiles[board_][device_]["bl2"]["8G"]={"name":ufname,"url":ufurl}
+                else:
+                    ubootfiles[board_][device_]["bl2"]={"name":ufname,"url":ufurl}
+            elif ufname.endswith("bl2.img"):
+                print(ufname)
+                if not "bl2" in ubootfiles[board_][device_]:
+                    ubootfiles[board_][device_]["bl2"]={}
+                if "8GB" in ufname:
+                    if not "8G" in ubootfiles[board_][device_]["bl2"]:
+                        ubootfiles[board_][device_]["bl2"]["8G"]={}
+                    if "ubi" in ufname:
+                        if not "UBI" in ubootfiles[board_][device_]["bl2"]:
+                            ubootfiles[board_][device_]["bl2"]["UBI"]={}
+                        ubootfiles[board_][device_]["bl2"]["8G"]["UBI"]={"name":ufname,"url":ufurl}
+                    else:
+                        ubootfiles[board_][device_]["bl2"]["8G"]["name"]=ufname
+                        ubootfiles[board_][device_]["bl2"]["8G"]["url"]=ufurl
+                elif "ubi" in ufname:
+                    ubootfiles[board_][device_]["bl2"]["UBI"]={"name":ufname,"url":ufurl}
+                else:
+                    ubootfiles[board_][device_]["bl2"]["name"]=ufname
+                    ubootfiles[board_][device_]["bl2"]["url"]=ufurl
+            elif ufname.endswith("fip.bin"):
+                ubootfiles[board_][device_]["fip"]={"name":ufname,"url":ufurl}
+    return ubootfiles
 
-kernel_releases=download(kernel_releases_url)
-krj=json.loads(kernel_releases)
+ubootfiles=getUbootInfo()
+print("files:",json.dumps(ubootfiles,indent=2))
 
-if krj:
+
+def getKernelInfo():
+    kernel_releases_url="https://api.github.com/repos/frank-w/BPI-Router-Linux/releases"
+    kernel_releases=download(kernel_releases_url)
+    krj=json.loads(kernel_releases)
+
     kfiles={}
-    for rel in krj:
-        kname=rel.get("name")
+    if krj:
+        for rel in krj:
+            kname=rel.get("name")
 
-        if re.search('CI-BUILD-.*-main',kname):
-            branch=re.sub(r'^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
-            #print("branch:",branch)
-            rel["body"]=""
-            if branch == kernel+'-main':
-                #print("kernel-release",kname)
-                if not branch in kfiles:
-                    rdata={}
-                    for kf in rel.get("assets"):
-                        kfname=kf.get("name")
-                        if re.search(r"^bpi-r.*\.tar.gz$",kfname):
-                            board_=re.sub(boardpattern,r'\1',kfname)
-                            #if not board in rdata:
-                            #    rdata[board]={}
-                            #rdata[board][kfname]=kf.get("browser_download_url")
-                            rdata[board_]=kf.get("browser_download_url")
-                    kfiles[branch]=rdata
-            #print("release-data:",json.dumps(rel,indent=2))
-    #print("files:",json.dumps(kfiles,indent=2))
+            if re.search('CI-BUILD-.*-main',kname):
+                branch=re.sub(r'^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
+                #print("branch:",branch)
+                rel["body"]=""
+                if branch == kernel+'-main':
+                    #print("kernel-release",kname)
+                    if not branch in kfiles:
+                        rdata={}
+                        for kf in rel.get("assets"):
+                            kfname=kf.get("name")
+                            if re.search(r"^bpi-r.*\.tar.gz$",kfname):
+                                board_=re.sub(boardpattern,r'\1',kfname)
+                                #if not board in rdata:
+                                #    rdata[board]={}
+                                #rdata[board][kfname]=kf.get("browser_download_url")
+                                rdata[board_]=kf.get("browser_download_url")
+                        kfiles[branch]=rdata
+                #print("release-data:",json.dumps(rel,indent=2))
 
-bin_releases=download(bin_releases_url)
-brj=json.loads(bin_releases)
+    return kfiles
 
-if brj:
+kfiles=getKernelInfo()
+#print("files:",json.dumps(kfiles,indent=2))
+
+def getBinInfo():
+    bin_releases_url="https://api.github.com/repos/frank-w/arm-crosscompile/releases"
+    bin_releases=download(bin_releases_url)
+    brj=json.loads(bin_releases)
+
     bfiles={}
-    for rel in brj:
-        bname=rel.get("name")
+    if brj:
+        for rel in brj:
+            bname=rel.get("name")
 
-        for f in rel.get("assets"):
-            fname=f.get("name")
+            for f in rel.get("assets"):
+                fname=f.get("name")
 
-            if not fname in bfiles:
-                if re.search(r"^(hostapd|iproute2|iperf|wpa_supplicant).*\.tar.gz$",fname):
-                    #fn=re.sub(boardpattern,r'\1',kfname)
-                    bfiles[fname]=f.get("browser_download_url")
+                if not fname in bfiles:
+                    if re.search(r"^(hostapd|iproute2|iperf|wpa_supplicant).*\.tar.gz$",fname):
+                        #fn=re.sub(boardpattern,r'\1',kfname)
+                        bfiles[fname]=f.get("browser_download_url")
+    return bfiles
 
-print("binfiles:",bfiles)
+bfiles=getBinInfo()
+#print("binfiles:",bfiles)
 
 ufile=None
 kfile=None
 
 if board and board in ubootfiles:
-    ufile=ubootfiles[board]
+    #ufile=ubootfiles[board]
+    ufile=ubootfiles[board][device] #={"bl2":{"name":ufname,"url":ufurl}}
+
+
     print(f"board:{board} ubootfile: {ufile}")
     if kernel:
         if kernel+"-main" in kfiles:
@@ -142,18 +194,29 @@ newconfig={}
 if config and config.get("skipubootdownload"):
     newconfig["skipubootdownload"]=config.get("skipubootdownload")
     newconfig["imgfile"]=config.get("imgfile")
-elif ufile:
-    a = urlparse(ufile)
-    fname=os.path.basename(a.path)
+elif ufile and "mmc" in device:
+    fname=ufile.get("name")
+    a = urlparse(ufile.get("url"))
+    #fname=os.path.basename(a.path)
     print(f"ubootfile: {ufile} filename: {fname}")
     if os.path.isfile(fname):
         print(fname,"already exists")
         c=input('overwrite it [yn]? ').lower()
     else: c='y'
     if c=='y':
-        download(ufile,fname)
+        download(ufile.get("url"),fname)
     newconfig["imgfile"]=fname
 else: print("no uboot image defined!")
+
+if ufile and device in ['spim-nand','nor']:
+    bl2=ufile.get("bl2")
+    fip=ufile.get("fip")
+    if bl2:
+        download(bl2.get("url"),bl2.get("name"))
+        newconfig["bl2file"]=bl2.get("name")
+    if fip:
+        download(fip.get("url"),fip.get("name"))
+        newconfig["fipfile"]=fip.get("name")
 
 if config and config.get("skipkerneldownload"):
     newconfig["skipkerneldownload"]=config.get("skipkerneldownload")
