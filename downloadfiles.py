@@ -116,7 +116,7 @@ if brj:
             fname=f.get("name")
 
             if not fname in bfiles:
-                if re.search(r"^(hostapd|iproute2).*\.tar.gz$",fname):
+                if re.search(r"^(hostapd|iproute2|iperf|wpa_supplicant).*\.tar.gz$",fname):
                     #fn=re.sub(boardpattern,r'\1',kfname)
                     bfiles[fname]=f.get("browser_download_url")
 
@@ -171,20 +171,20 @@ else: print("no kernel defined!")
 if config and config.get("userpackages"):
     newconfig["userpackages"]=config.get("userpackages")
 
-if config and config.get("replacehostapd"):
-    newconfig["replacehostapd"]=config.get("replacehostapd")
+for replacement in ["hostapd","wpa_supplicant","iperf","iproute2"]:
+    if config and config.get("replace"+replacement):
+        newconfig["replace"+replacement]=config.get("replace"+replacement)
 
-    if bfiles:
-        hostapdfile=bfiles.get("hostapd_arm64.tar.gz")
-        a = urlparse(hostapdfile)
-        fname=os.path.basename(a.path)
-        print(f"hostapdfile: {hostapdfile} filename: {fname}")
-        if not os.path.isfile(fname):
-            download(hostapdfile,fname)
-        else: print(fname,"already exists")
-        newconfig["hostapdfile"]=fname
-    else: print("no bfiles defined!")
-
+        if bfiles:
+            replacefile=bfiles.get(replacement+"_arm64.tar.gz")
+            a = urlparse(replacefile)
+            fname=os.path.basename(a.path)
+            print(f"{replacement}file: {replacefile} filename: {fname}")
+            if not os.path.isfile(fname):
+                download(replacefile,fname)
+            else: print(fname,"already exists")
+            newconfig[replacement+"file"]=fname
+        else: print("no bfiles defined!")
 
 
 with open(conffile, 'w') as f:
