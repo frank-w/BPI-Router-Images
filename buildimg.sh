@@ -17,10 +17,6 @@ then
 fi
 if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
 
-if [[  "$board" == "bpi-r4" ]]; then
-	echo "replacehostapd=1" >> sourcefiles_${board}.conf
-fi
-
 PACKAGE_Error=0
 PACKAGES=$(dpkg -l | awk '{print $2}')
 NEEDED_PKGS="python3 python3-requests parted qemu-user-static debootstrap binfmt-support"

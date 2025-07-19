@@ -61,27 +61,33 @@ jobs:
       - name: Build R2 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r2 }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2.conf
           ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }}
           ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }} 6.12
 
       - name: Build R64 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r64 }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r64.conf
           ./buildimg.sh bpi-r64 ${{ vars.UBUNTU_DIST }}
 
       - name: Build R2Pro Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r2pro }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2pro.conf
           ./buildimg.sh bpi-r2pro ${{ vars.UBUNTU_DIST }}
 
       - name: Build R3 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r3 }}
         run: |
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3.conf
           ./buildimg.sh bpi-r3 ${{ vars.UBUNTU_DIST }}
 
       - name: Build R4 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
         run: |
+          echo -e "replacehostapd=1\nreplaceiperf=1" > sourcefiles_bpi-r4.conf
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ vars.UBUNTU_DIST }}
 
       - name: Upload to gdrive

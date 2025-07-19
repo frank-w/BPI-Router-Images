@@ -89,6 +89,7 @@ jobs:
         if: ${{ inputs.bpi-r4 }}
         run: |
           #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
+          echo -e "replacehostapd=1\nreplaceiperf=1" > sourcefiles_bpi-r4.conf
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ vars.DEBIAN_DIST }}
 
