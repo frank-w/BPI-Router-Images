@@ -176,9 +176,9 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		#unpack wmt-tools
 		sudo tar -xzf $kernelfile --strip-components=1 -C $targetdir BPI-ROOT/{etc,usr,system}
 		#disable ip setting and dnsmasq (done via systemd-config)
-		sed -i "/hostapd started...set IP/,/service dnsmasq restart/d" $targetdir/usr/sbin/wifi.sh
+		sudo sed -i "/hostapd started...set IP/,/service dnsmasq restart/d" $targetdir/usr/sbin/wifi.sh
 		#add wifi.sh to rc.local (autostart)
-		sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
+		sudo sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
 	else
 		for a in hostapd iperf wpa_supplicant iproute2;
 		do
