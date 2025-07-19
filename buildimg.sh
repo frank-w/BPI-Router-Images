@@ -184,12 +184,21 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		#add wifi.sh to rc.local (autostart)
 		sed -i '/^exit/s/^/\/usr\/sbin\/wifi.sh &\n/' $targetdir/etc/rc.local
 	else
-		if [[ -n "$replacehostapd" ]];then
-			tar -tzf $hostapdfile #currently only show content
-			echo "unpack hostapd to bpi-root loopdev..."
-			sudo tar -xzf $hostapdfile -C mnt/BPI-ROOT/usr/local/sbin/
-			ls -lh mnt/BPI-ROOT/usr/local/sbin/
-		fi
+		for a in hostapd iperf wpa_supplicant iproute2;
+		do
+			varname="replace${a}"
+			if [[ -n "${!varname}" ]];then
+				varname2="${a}file"
+				#tar -tzf ${!varname2} #currently only show content
+				echo "unpack $a to bpi-root loopdev..."
+				if [[ "$a" =~ hostap|wpa_supplicant ]];then
+					sudo tar -xzf ${!varname2} -C mnt/BPI-ROOT/usr/local/sbin/
+				else
+					sudo tar -xzf ${!varname2} -C mnt/BPI-ROOT/usr/local/
+				fi
+			fi
+		done
+		ls -lh mnt/BPI-ROOT/usr/local/{,s}bin/
 		sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
 	fi
 	#copy firmware
