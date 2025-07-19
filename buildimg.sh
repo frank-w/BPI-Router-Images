@@ -199,7 +199,13 @@ if [[ ${board} != "bpi-r2pro" ]];then
 			fi
 		done
 		ls -lh mnt/BPI-ROOT/usr/local/{,s}bin/
-		sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
+		if [[  "$board" == "bpi-r4" ]]; then
+			sudo rm $targetdir/etc/hostapd/hostapd_wlan*.conf
+			sudo chroot $targetdir bash -c "ln -fs hostapd_2g4.conf /etc/hostapd/hostapd.conf"
+		else
+			sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
+		fi
+		ls -lh mnt/BPI-ROOT/etc/hostapd/
 	fi
 	#copy firmware
 	if [[ ! -d firmware ]];
