@@ -180,9 +180,7 @@ for replacement in ["hostapd","wpa_supplicant","iperf","iproute2"]:
             a = urlparse(replacefile)
             fname=os.path.basename(a.path)
             print(f"{replacement}file: {replacefile} filename: {fname}")
-            if not os.path.isfile(fname):
-                download(replacefile,fname)
-            else: print(fname,"already exists")
+            download(replacefile,fname)
             newconfig[replacement+"file"]=fname
         else: print("no bfiles defined!")
 
