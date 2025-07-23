@@ -171,6 +171,29 @@ def getBinInfo():
 bfiles=getBinInfo()
 #print("binfiles:",bfiles)
 
+def getInitrdInfo():
+    releases_url="https://api.github.com/repos/frank-w/buildroot/releases"
+    releases=download(releases_url)
+    irj=json.loads(releases)
+
+    #print("initrd releases:",json.dumps(irj,indent=2))
+
+    ifiles={}
+    if irj:
+        for rel in irj:
+            bname=rel.get("tag_name")
+
+            for f in rel.get("assets"):
+                fname=f.get("name")
+
+                if not fname in ifiles:
+                    if re.search(r"arm(hf|64).cpio.zst$",fname):
+                        ifiles[fname]=f.get("browser_download_url")
+    return ifiles
+
+ifiles=getInitrdInfo()
+print("initfiles:",ifiles)
+
 ufile=None
 kfile=None
 
