@@ -18,6 +18,19 @@ on:
         type: boolean
       packages:
         description: additional packages (separated by space)
+      kernel:
+        type: choice
+        description: linux kernel
+        options:
+          - 6.12
+          - 6.6
+          - 5.15
+      bootdevice:
+        type: choice
+        description: Bootdevice
+        options:
+          - sdmmc
+          - emmc
 
 jobs:
   debian-gdrive-upload:
@@ -90,7 +103,7 @@ jobs:
       - name: Build R3 Mini Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r3mini }}
         run: |
-          echo -e "device=emmc\nuserpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3mini.conf
+          echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3mini.conf
           ./buildimg.sh bpi-r3mini ${{ vars.DEBIAN_DIST }}
 
       - name: Build R4 Debian ${{ vars.DEBIAN_DIST }} Image
