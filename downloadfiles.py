@@ -205,8 +205,10 @@ if board and board in ubootfiles:
     print(f"board:{board} ubootfile: {ufile}")
     if kernel:
         if kernel+"-main" in kfiles:
-            if board in kfiles[kernel+"-main"]:
-                kfile=kfiles[kernel+"-main"][board]
+            b=board
+            if b=="bpi-r3mini": b="bpi-r3"
+            if b in kfiles[kernel+"-main"]:
+                kfile=kfiles[kernel+"-main"][b]
                 print(f"board:{board} kernelfile: {kfile}")
             else: print(f"board not in kfiles[kernel]")
         else: print(f"kernel not in kfiles")
