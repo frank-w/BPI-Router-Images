@@ -34,6 +34,9 @@ case "$board" in
 		mmcbootpart=5
 		mmcrootpart=6
 		arch="arm64"
+		if [[ "$board" == "bpi-r3mini" ]];then
+			device="emmc"
+		fi
 	;;
 	*)
 		echo "missing/unsupported board $1";exit
