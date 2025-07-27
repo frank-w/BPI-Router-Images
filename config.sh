@@ -29,7 +29,7 @@ case "$board" in
 		mmcrootpart=3
 		arch="arm64"
 	;;
-	"bpi-r3"|"bpi-r4")
+	"bpi-r3"|"bpi-r3mini"|"bpi-r4")
 		mmcdev=0
 		mmcbootpart=5
 		mmcrootpart=6
