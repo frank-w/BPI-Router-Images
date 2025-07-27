@@ -7,6 +7,7 @@
 board=$1
 distro=$2 #bookworm|noble
 kernel="6.12"
+device="sdmmc"
 
 source config.sh
 
@@ -16,6 +17,7 @@ then
 	exit;
 fi
 if [[ -n "$3" ]] && [[ "$3" =~ ^[1-9]\.[0-9]+$ ]];then kernel=$3;fi
+if [[ -n "$4" ]] && [[ "$4" =~ ^(sdmmc|emmc)$ ]];then device=$4;fi
 
 PACKAGE_Error=0
 PACKAGES=$(dpkg -l | awk '{print $2}')
@@ -44,9 +46,9 @@ function ctrl_c() {
 	exit 1
 }
 
-echo "create image for ${board} (${arch}) ${distro} ${kernel}"
+echo "create image for ${board} (${arch}) ${distro} ${kernel} ${device}"
 
-python3 downloadfiles.py ${board} ${kernel}
+python3 downloadfiles.py ${board} ${kernel} ${device}
 
 ls -lh sourcefiles_${board}.conf
 if [[ $? -ne 0 ]];then echo "sourcefiles_$board.conf file missing"; exit 1; fi
@@ -69,7 +71,7 @@ if [[ -z "${kernelfile}" ]];then
 else
 	kernel=$(echo ${kernelfile}|sed -e 's/^.*_\(.*\).tar.gz/\1/')
 fi
-newimgfile=${board}_${distro}_${kernel}.img.gz
+newimgfile=${board}_${distro}_${kernel}_${device}.img.gz
 
 cp $imgfile $newimgfile
 echo "unpack imgfile ($newimgfile)..."
