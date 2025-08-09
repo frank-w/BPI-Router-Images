@@ -2,7 +2,7 @@
 #sudo apt-get install qemu-user-static debootstrap binfmt-support
 
 #debian
-distro_debian=(buster bullseye bookworm)
+distro_debian=(buster bullseye bookworm trixie)
 name=debian
 #distro=bullseye
 distro=bookworm
