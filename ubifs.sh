@@ -93,6 +93,10 @@ mkfs.ubifs -m 2048 -e 124KiB -c 800 -r ./ubifs/ rootfs.ubifs
 #vol_alignment=1
 #vol_flags=autoresize
 
+if [[ -z "${fipfile}" ]]; then
+	echo "fip file not defined";
+	exit 1;
+fi
 (
 # id name image autoresize size type
 ubivol 1 fip ${fipfile} 0 1MiB
