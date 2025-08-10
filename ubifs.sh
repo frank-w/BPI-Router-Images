@@ -28,6 +28,7 @@ ubivol() {
 	fi
 }
 
+rm -r ./ubifs
 mkdir -p ./ubifs/
 
 python3 downloadfiles.py ${board} 6.12 spim-nand
@@ -50,6 +51,7 @@ if [[ -n "$initrd" ]];then
 	if [[ $? -eq 0 ]];then
 		echo "initrd=$initrd" > ./ubifs/uEnv.txt
 	fi
+	ls -lh ./ubifs/
 fi
 #cp ${kernelfile} ./ubifs/
 echo $kernelfile
