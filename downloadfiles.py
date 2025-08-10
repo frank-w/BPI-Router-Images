@@ -272,6 +272,13 @@ for replacement in ["hostapd","wpa_supplicant","iperf","iproute2"]:
             newconfig[replacement+"file"]=fname
         else: print("no bfiles defined!")
 
+if device in ["spim-nand","nor"]:
+    if ifiles:
+        fname="rootfs_arm64.cpio.zst"
+        if fname in ifiles:
+            print(f"initrd-file: {fname}")
+            download(ifiles.get(fname),fname)
+            newconfig["initrd"]=fname
 
 with open(conffile, 'w') as f:
     for d in newconfig:
