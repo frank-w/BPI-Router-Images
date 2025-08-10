@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # some parts are from here: https://github.com/openwrt/openwrt/blob/main/scripts/ubinize-image.sh
 
 board=$1
@@ -108,3 +108,6 @@ ubivol 4 rootfs rootfs.ubifs 1 50MiB
 peb_size=128
 min_io_size=2048
 ubinize -vv -o ${board}_nand.img -m ${min_io_size} -p ${peb_size}KiB ubi.conf
+if [[ $? -eq 0 ]];then
+	echo "${board}_nand.img created..."
+fi
