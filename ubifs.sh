@@ -30,6 +30,8 @@ ubivol() {
 
 mkdir -p ./ubifs/
 
+python3 downloadfiles.py ${board} 6.12 spim-nand
+
 . sourcefiles_${board}.conf
 
 if [[ -z "$initrd" ]];then
