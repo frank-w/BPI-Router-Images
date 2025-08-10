@@ -99,10 +99,10 @@ if [[ -z "${fipfile}" ]]; then
 fi
 (
 # id name image autoresize size type
-ubivol 1 fip ${fipfile} 0 1MiB
-ubivol 2 ubootenv none.bin 0 128KiB
-ubivol 3 ubootenv2 none.bin 0 128KiB
-ubivol 4 rootfs rootfs.ubifs 1 50MiB
+ubivol 0 fip ${fipfile} 0 1MiB static
+ubivol 1 ubootenv none.bin 0 128KiB
+ubivol 2 ubootenv2 none.bin 0 128KiB
+ubivol 3 rootfs rootfs.ubifs 1 50MiB
 ) > ubi.conf
 
 peb_size=128
