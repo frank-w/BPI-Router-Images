@@ -66,6 +66,7 @@ mtd erase spi-nand0 0x200000
 fatload usb 0:1 $loadaddr bpi-r4-pro_nand.img
 mtd write spi-nand0 $loadaddr 0x200000 $filesize
 ```
+make sure size of ubi partition in devicetree matches your nand size on first linux boot to correctly resize the ubifs, else EC errors occour when booting from nand.
 
 ## first bootup
 
