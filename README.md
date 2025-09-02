@@ -4,7 +4,7 @@
 
 ```sh
 ./buildimg.sh bpi-r3 bookworm
-./buildimg.sh bpi-r4 jammy
+./buildimg.sh bpi-r4 noble
 
 #use kernel 6.12 for r2 (normally 5.15 is used because of internal wifi support)
 ./buildimg.sh bpi-r2 bookworm 6.12
