@@ -125,7 +125,12 @@ ubivol 3 rootfs rootfs.ubifs 1 50MiB
 
 peb_size=128
 min_io_size=2048
-ubinize -vv -o ${board}_nand.img -m ${min_io_size} -p ${peb_size}KiB ubi.conf
+if [[ -n "${variant}" ]];then
+	imgname=${variant}_nand.img
+else
+	imgname=${board}_nand.img
+fi
+ubinize -vv -o ${imgname} -m ${min_io_size} -p ${peb_size}KiB ubi.conf
 if [[ $? -eq 0 ]];then
-	echo "${board}_nand.img created..."
+	echo "${imgname} created..."
 fi
