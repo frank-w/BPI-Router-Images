@@ -46,16 +46,34 @@ if [[ -z "$initrd" ]];then
 	fi
 fi
 touch ./ubifs/uEnv.txt
+
+if [[ -n "$variant" ]];then
+	case $variant in
+		"bpi-r3-mini")
+			#r3mini is not selected via uEnv.txt...uboot is compiled with fixed bootconf
+		;;
+		"bpi-r4-2g5")
+			echo "is2g5=1" > ./ubifs/uEnv.txt
+		;;
+		"bpi-r4-pro")
+			echo "isR4Pro=1" > ./ubifs/uEnv.txt
+		;;
+		"bpi-r4-lite")
+			echo "isr4lite=1" > ./ubifs/uEnv.txt
+		;;
+	esac
+fi
 if [[ -n "$initrd" ]];then
 	cp $initrd ./ubifs/
 	if [[ $? -eq 0 ]];then
-		echo "initrd=$initrd" > ./ubifs/uEnv.txt
+		echo "initrd=$initrd" >> ./ubifs/uEnv.txt
 	fi
-	ls -lh ./ubifs/
 fi
+cat ./ubifs/uEnv.txt
 #cp ${kernelfile} ./ubifs/
 echo $kernelfile
 tar -xzf ${kernelfile} --strip-components=1 -C ./ubifs/ --wildcards 'BPI-BOOT/*.itb'
+ls -lh ./ubifs/
 
 mkfs.ubifs -m 2048 -e 124KiB -c 800 -r ./ubifs/ rootfs.ubifs
 
@@ -107,7 +125,12 @@ ubivol 3 rootfs rootfs.ubifs 1 50MiB
 
 peb_size=128
 min_io_size=2048
-ubinize -vv -o ${board}_nand.img -m ${min_io_size} -p ${peb_size}KiB ubi.conf
+if [[ -n "${variant}" ]];then
+	imgname=${variant}_nand.img
+else
+	imgname=${board}_nand.img
+fi
+ubinize -vv -o ${imgname} -m ${min_io_size} -p ${peb_size}KiB ubi.conf
 if [[ $? -eq 0 ]];then
-	echo "${board}_nand.img created..."
+	echo "${imgname} created..."
 fi
