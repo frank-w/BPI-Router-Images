@@ -79,7 +79,7 @@ mtd erase spi-nand0
 mtd erase spi-nand0 0x0 0x200000
 # load bl2 and flash it
 fatload usb 0:1 $loadaddr bpi-r4pro_spim-nand_ubi_bl2.img
-mtd write spi-nand0 $loadaddr 0x0 0x100000
+mtd write spi-nand0 $loadaddr 0x0 $filesize
 # erase ubi mtd partition (if not done full erase)
 mtd erase spi-nand0 0x200000
 # load and flash ubinized image
