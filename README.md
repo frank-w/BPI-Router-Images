@@ -31,6 +31,26 @@ kernelfile=bpi-r4_6.5.0-rc1.tar.gz
 ```
 both configs can be used together to not download anything from my github releases.
 
+## how to build nand-image
+
+To use specifc files you can set them in the sourcefiles_bpi-r*.conf.
+If they are not defined, script tries to download the latest files.
+
+if using r4-2g5, r4pro or r4lite board you should set the variant variable.
+
+```
+variant=bpi-r4-lite
+skipubootdownload=1
+fipfile=bpi-r4lite_spim-nand_ubi_fip.bin
+skipkerneldownload=1
+kernelfile=bpi-r4_6.17.0-rc1-r4lite.tar.gz
+skipinitrddownload=1
+initrd=rootfs_arm64.cpio.zst
+```
+finally run build process
+```
+./ubifs.sh bpi-r4
+```
 ## how add packages
 
 add this option in the sourcefiles_board.conf
