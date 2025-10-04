@@ -11,7 +11,7 @@ device="sdmmc"
 
 source config.sh
 
-if [[ ! "$distro" =~ bookworm|noble ]];
+if [[ ! "$distro" =~ bookworm|trixie|noble ]];
 then
 	echo "invalid distribution '$distro'";
 	exit;
