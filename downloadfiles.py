@@ -216,6 +216,8 @@ if board and board in ubootfiles:
 else: print(f"{board} not found in ubootfiles")
 
 newconfig={}
+newconfig["variant"]=config.get("variant","")
+
 if config and config.get("skipubootdownload"):
     newconfig["skipubootdownload"]=config.get("skipubootdownload")
     newconfig["imgfile"]=config.get("imgfile","")
