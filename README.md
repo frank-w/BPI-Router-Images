@@ -1,71 +1,60 @@
-# BPI-Router-Images
+## Prerequisite
 
-## examples:
+1. Build U-boot https://github.com/brucerry/BPI-Router-Uboot
+    - bpi-r3_emmc.img.gz
 
-```sh
-./buildimg.sh bpi-r3 bookworm
-./buildimg.sh bpi-r4 jammy
+2. Build Linux https://github.com/brucerry/BPI-Router-Linux
+    - bpi-r3_6.12.47-main.tar.gz
+    
+## Setup the Workspace in Native Linux Distro
 
-#use kernel 6.12 for r2 (normally 5.15 is used because of internal wifi support)
-./buildimg.sh bpi-r2 bookworm 6.12
+It can be shown that x86 WSL2/Docker would fail the `buildchroot` and `partprobe`/`loopdev` processes.
+
+The build is tested in Debian/Ubuntu/LinuxMint system:
+
+```
+cat /etc/os-release
+
+NAME="Linux Mint"
+VERSION="21.1 (Vera)"
+ID=linuxmint
+ID_LIKE="ubuntu debian"
+PRETTY_NAME="Linux Mint 21.1"
+VERSION_ID="21.1"
+HOME_URL="https://www.linuxmint.com/"
+SUPPORT_URL="https://forums.linuxmint.com/"
+BUG_REPORT_URL="http://linuxmint-troubleshooting-guide.readthedocs.io/en/latest/"
+PRIVACY_POLICY_URL="https://www.linuxmint.com/"
+VERSION_CODENAME=vera
+UBUNTU_CODENAME=jammy
 ```
 
-## use own uboot/kernel files
+Install packages:
 
-for boards not yet supported by my u-boot/kernel pipeline
-or for emmc it may be needed to use own compiled packages.
-
-the buildimg.sh reads a configfile named sourcefiles_board.conf where 'board'
-is the supplied board name (e.g. "bpi-r4").
-
-to use your own compiled uboot base-image (created by "build.sh createimg" in my uboot repo)
-use this setting:
 ```
-skipubootdownload=1
-imgfile=bpi-r4_sdmmc.img.gz
-```
-for own kernel-package (created by "build.sh pack" in my kernel repo) use this:
-```
-skipkerneldownload=1
-kernelfile=bpi-r4_6.5.0-rc1.tar.gz
-```
-both configs can be used together to not download anything from my github releases.
-
-## how add packages
-
-add this option in the sourcefiles_board.conf
-
-```sh
-userpackages="ethtool iperf3 tcpdump"
+sudo apt install python3 python3-requests parted qemu-user-static debootstrap binfmt-support udev
 ```
 
-## how to write image
+Clone:
 
-```sh
-gunzip -c bpi-r3_sdmmc.img.gz | sudo dd bs=1M status=progress conv=notrunc,fsync of=/dev/sdX
+```
+cd ~
+git clone git@github.com:brucerry/BPI-Router-Images.git -b main
+cd BPI-Router-Images
 ```
 
-## first bootup
+## Steps
 
-### login
+1. Copy the U-boot and Linux packs to this workspace
 
-user: root
-password: bananapi
+2. Run script
 
-ssh root-login enabled (should be disabled after other users are created)
-
-/etc/ssh/sshd_config (open e.g. with nano):
-add # before PermitRootLogin=yes
-and restart ssh daemon
-
-```sh
-systemctl restart ssh
+```
+./run.sh bpi-r3 noble
 ```
 
-ssh host keys should be regenerated
+3. Flash eMMC
 
-```sh
-/bin/rm -v /etc/ssh/ssh_host_*
-dpkg-reconfigure openssh-server
-systemctl restart ssh
+```
+gunzip -c bpi-r3_noble_6.12.47-main_sdmmc.img.gz | dd bs=512 conv=notrunc,fsync of=/dev/mmcblk0
 ```
