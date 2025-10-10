@@ -2,7 +2,7 @@
 
 function usage {
     echo "Usage: $0 <model> <distro>"
-    echo "Available models: bpi-r3"
+    echo "Available models: bpi-r3 bpi-r4"
     echo "Available distro:"
     echo "    * Debian: buster bullseye bookworm trixie"
     echo "    * Ubuntu: focal jammy noble"
@@ -28,6 +28,7 @@ done
 
 case $model in
     bpi-r3) ;;
+    bpi-r4) ;;
     *) echo "Unsupported model: $model" && usage && exit 1 ;;
 esac
 
@@ -38,10 +39,11 @@ time {
     git restore .
     conffile=sourcefiles_${model}.conf
     rm -rf $conffile
+    [ $model = "bpi-r4" ] && echo -e "replacehostapd=1\nreplaceiperf=1" >> $conffile
     echo "skipubootdownload=1" >> $conffile
     echo "skipkerneldownload=1" >> $conffile
     echo "imgfile=${model}_emmc.img.gz" >> $conffile
     echo "kernelfile=${model}_6.12.47-main.tar.gz" >> $conffile
-    echo "userpackages=\"ethtool iperf3 tcpdump vim git tig mtd-utils memtester file pciutils usbutils traceroute iperf3 net-tools psmisc wget curl fdisk ack bridge-utils wpasupplicant isc-dhcp-client man tshark\"" >> $conffile
+    echo "userpackages=\"ethtool iperf3 tcpdump vim git tig mtd-utils memtester file pciutils usbutils traceroute net-tools psmisc wget curl fdisk ack bridge-utils wpasupplicant isc-dhcp-client man tshark\"" >> $conffile
     ./buildimg.sh $model $distro
 }
