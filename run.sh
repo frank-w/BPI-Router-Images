@@ -32,6 +32,12 @@ case $model in
     *) echo "Unsupported model: $model" && usage && exit 1 ;;
 esac
 
+uboot=${model}_emmc.img.gz
+kernel=${model}_6.17.0-main.tar.gz
+
+[ ! -e $uboot ] && echo "File not found: $uboot" && exit 1
+[ ! -e $kernel ] && echo "File not found: $kernel" && exit 1
+
 time {
     sudo losetup -D
     sudo umount -l ${name}_${distro}_arm64
@@ -42,8 +48,8 @@ time {
     [ $model = "bpi-r4" ] && echo -e "replacehostapd=1\nreplaceiperf=1" >> $conffile
     echo "skipubootdownload=1" >> $conffile
     echo "skipkerneldownload=1" >> $conffile
-    echo "imgfile=${model}_emmc.img.gz" >> $conffile
-    echo "kernelfile=${model}_6.12.47-main.tar.gz" >> $conffile
+    echo "imgfile=$uboot" >> $conffile
+    echo "kernelfile=$kernel" >> $conffile
     echo "userpackages=\"ethtool iperf3 tcpdump vim git tig mtd-utils memtester file pciutils usbutils traceroute net-tools psmisc wget curl fdisk ack bridge-utils wpasupplicant isc-dhcp-client man tshark\"" >> $conffile
     ./buildimg.sh $model $distro
 }
