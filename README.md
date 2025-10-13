@@ -1,10 +1,10 @@
 ## Prerequisite
 
 1. Build U-boot https://github.com/brucerry/BPI-Router-Uboot
-    - bpi-r3_emmc.img.gz
+    - bpi-r4_emmc.img.gz
 
 2. Build Linux https://github.com/brucerry/BPI-Router-Linux
-    - bpi-r3_6.12.47-main.tar.gz
+    - bpi-r4_6.17.0-main.tar.gz
     
 ## Setup the Workspace in Native Linux Distro
 
@@ -50,11 +50,14 @@ cd BPI-Router-Images
 2. Run script
 
 ```
-./run.sh bpi-r3 noble
+./run.sh bpi-r4 noble
 ```
 
 3. Flash eMMC
 
 ```
-gunzip -c bpi-r3_noble_6.12.47-main_sdmmc.img.gz | dd bs=512 conv=notrunc,fsync of=/dev/mmcblk0
+echo 0 > /sys/block/mmcblk0boot0/force_ro
+dd if=bpi-r4_emmc_bl2.img of=/dev/mmcblk0boot0
+gunzip -c bpi-r4_noble_6.17.0-main_sdmmc.img.gz | dd bs=512 conv=notrunc,fsync of=/dev/mmcblk0
+mmc bootpart enable 1 1 /dev/mmcblk0
 ```
