@@ -50,6 +50,6 @@ time {
     echo "skipkerneldownload=1" >> $conffile
     echo "imgfile=$uboot" >> $conffile
     echo "kernelfile=$kernel" >> $conffile
-    echo "userpackages=\"ethtool iperf3 tcpdump vim git tig mtd-utils memtester file pciutils usbutils traceroute net-tools psmisc wget curl fdisk ack bridge-utils wpasupplicant isc-dhcp-client man tshark\"" >> $conffile
+    echo "userpackages=\"ethtool iperf3 tcpdump vim git tig mtd-utils memtester file pciutils usbutils traceroute net-tools psmisc wget curl fdisk ack bridge-utils wpasupplicant isc-dhcp-client man tshark mmc-utils\"" >> $conffile
     ./buildimg.sh $model $distro
 }
