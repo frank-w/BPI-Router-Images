@@ -22,6 +22,8 @@ ramdisksize=1G
 #sudo apt install debootstrap qemu-user-static
 function checkpkg(){
 	echo "checking for needed packages..."
+	#fix for debian where /usr/sbin/ is not in path for normal users (correctly)
+	export PATH=$PATH:/usr/sbin/
 	for pkg in debootstrap qemu-arm-static qemu-aarch64-static; do
 		which $pkg >/dev/null;
 		if [[ $? -ne 0 ]];then

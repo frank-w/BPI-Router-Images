@@ -33,7 +33,7 @@ def read_settings(infile):
             config[key]=value.replace("\n", "")
     return config
 
-config=None
+config={}
 conffile='sourcefiles_'+board+'.conf'
 if os.path.isfile(conffile):
     config=read_settings(conffile)
