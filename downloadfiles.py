@@ -33,11 +33,13 @@ def read_settings(infile):
             config[key]=value.replace("\n", "")
     return config
 
-config=None
+config={}
 conffile='sourcefiles_'+board+'.conf'
 if os.path.isfile(conffile):
     config=read_settings(conffile)
     print(config)
+
+newconfig = config.copy()
 
 def download(url, file_name=None):
     # get request
@@ -50,7 +52,7 @@ def download(url, file_name=None):
     else:
         return response.content
 
-boardpattern='^(bpi-r[2346]+(pro|mini)?).*$'
+boardpattern='^(bpi-r[2346]+(pro|mini|lite)?).*$'
 
 def getUbootInfo():
     uboot_release_url="https://api.github.com/repos/frank-w/u-boot/releases/latest"
@@ -215,38 +217,31 @@ if board and board in ubootfiles:
     else: print(f"kernel not set!")
 else: print(f"{board} not found in ubootfiles")
 
-newconfig={}
-if config and config.get("skipubootdownload"):
-    newconfig["skipubootdownload"]=config.get("skipubootdownload")
-    newconfig["imgfile"]=config.get("imgfile")
-elif ufile and "mmc" in device:
-    fname=ufile.get("name")
-    a = urlparse(ufile.get("url"))
-    #fname=os.path.basename(a.path)
-    print(f"ubootfile: {ufile} filename: {fname}")
-    if os.path.isfile(fname):
-        print(fname,"already exists")
-        c=input('overwrite it [yn]? ').lower()
-    else: c='y'
-    if c=='y':
-        download(ufile.get("url"),fname)
-    newconfig["imgfile"]=fname
+if not config.get("skipubootdownload") and ufile:
+    if "mmc" in device:
+        fname=ufile.get("name")
+        a = urlparse(ufile.get("url"))
+        #fname=os.path.basename(a.path)
+        print(f"ubootfile: {ufile} filename: {fname}")
+        if os.path.isfile(fname):
+            print(fname,"already exists")
+            c=input('overwrite it [yn]? ').lower()
+        else: c='y'
+        if c=='y':
+            download(ufile.get("url"),fname)
+            newconfig["imgfile"]=fname
+    elif device in ['spim-nand','nor']:
+        bl2=ufile.get("bl2")
+        fip=ufile.get("fip")
+        if bl2:
+            download(bl2.get("url"),bl2.get("name"))
+            newconfig["bl2file"]=bl2.get("name")
+        if fip:
+            download(fip.get("url"),fip.get("name"))
+            newconfig["fipfile"]=fip.get("name")
 else: print("no uboot image defined!")
 
-if ufile and device in ['spim-nand','nor']:
-    bl2=ufile.get("bl2")
-    fip=ufile.get("fip")
-    if bl2:
-        download(bl2.get("url"),bl2.get("name"))
-        newconfig["bl2file"]=bl2.get("name")
-    if fip:
-        download(fip.get("url"),fip.get("name"))
-        newconfig["fipfile"]=fip.get("name")
-
-if config and config.get("skipkerneldownload"):
-    newconfig["skipkerneldownload"]=config.get("skipkerneldownload")
-    newconfig["kernelfile"]=config.get("kernelfile")
-elif kfile:
+if not config.get("skipkerneldownload") and kfile:
     a = urlparse(kfile)
     fname=os.path.basename(a.path)
     print(f"kernelfile: {kfile} filename: {fname}")
@@ -255,9 +250,6 @@ elif kfile:
     else: print(fname,"already exists")
     newconfig["kernelfile"]=fname
 else: print("no kernel defined!")
-
-if config and config.get("userpackages"):
-    newconfig["userpackages"]=config.get("userpackages")
 
 for replacement in ["hostapd","wpa_supplicant","iperf","iproute2"]:
     if config and config.get("replace"+replacement):
@@ -272,6 +264,13 @@ for replacement in ["hostapd","wpa_supplicant","iperf","iproute2"]:
             newconfig[replacement+"file"]=fname
         else: print("no bfiles defined!")
 
+if not config.get("skipinitrddownload") and ifiles:
+    if device in ["spim-nand","nor"]:
+        fname="rootfs_arm64.cpio.zst"
+        if fname in ifiles:
+            print(f"initrd-file: {fname}")
+            download(ifiles.get(fname),fname)
+            newconfig["initrd"]=fname
 
 with open(conffile, 'w') as f:
     for d in newconfig:

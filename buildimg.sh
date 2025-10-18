@@ -82,6 +82,17 @@ if [[ $? -ne 0 ]];then echo "losetup ${LDEV} failed (${newimgfile%.*})"; exit 1;
 echo "mounting loopdev..."
 sudo partprobe ${LDEV}
 if [[ $? -ne 0 ]];then echo "partprobe failed"; exit 1; fi
+
+#replacing bl2 (e.g. R4 8GB)
+if [[ -n "$replacebl2" ]] && [[ -n "$bl2file" ]] && [[ -e "$bl2file" ]];then
+	echo "replace BL2 with $bl2file";
+	if [[ "$board" =~ ^bpi-r4 ]];then
+		sudo dd if=$bl2file of=${LDEV}p1
+	else
+		echo "BL2 replacement for $board not supported"
+	fi
+fi
+
 mkdir -p mnt/BPI-{B,R}OOT
 sudo mount ${LDEV}p${mmcbootpart} mnt/BPI-BOOT
 if [[ $? -ne 0 ]];then echo "mounting BPI-BOOT failed"; exit 1; fi
