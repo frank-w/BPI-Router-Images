@@ -123,3 +123,16 @@ ssh host keys should be regenerated
 dpkg-reconfigure openssh-server
 systemctl restart ssh
 ```
+
+### hostapd
+
+i recently switched to drop-in hostapd configs
+
+start for wlan1
+```sh
+systemctl start hostapd@wlan1
+systemctl status hostapd@wlan1
+systemctl enable hostapd@wlan1
+```
+
+on r4 the configs are named 2g4, 5g and 6g instead of wlan0/wlan1
