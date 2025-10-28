@@ -31,6 +31,17 @@ kernelfile=bpi-r4_6.5.0-rc1.tar.gz
 ```
 both configs can be used together to not download anything from my github releases.
 
+## replace BL2
+
+at least for BPI-R4 8G variant it is possible to replace bl2 from my u-boot-repo.
+
+This is possible with adding these lines to sourcefiles_bpi-r4.conf (file must exist)
+
+```
+replacebl2=1
+bl2file=bpi-r4_sdmmc_8GB_bl2.img
+```
+
 ## how to build nand-image
 
 To use specifc files you can set them in the sourcefiles_bpi-r*.conf.
