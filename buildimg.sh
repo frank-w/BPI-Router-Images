@@ -209,12 +209,9 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		done
 		ls -lh mnt/BPI-ROOT/usr/local/{,s}bin/
 		if [[  "$board" == "bpi-r4" ]]; then
-			sudo rm $targetdir/etc/hostapd/hostapd_wlan*.conf
-			sudo chroot $targetdir bash -c "ln -fs hostapd_2g4.conf /etc/hostapd/hostapd.conf"
 			sudo chroot $targetdir bash -c "/etc/init.d/hostapd stop"
 			sudo chroot $targetdir bash -c "systemctl disable --now hostapd"
 		else
-			# sudo chroot $targetdir bash -c "ln -fs hostapd_wlan0.conf /etc/hostapd/hostapd.conf"
 			sudo chroot $targetdir bash -c "/etc/init.d/hostapd stop"
 			sudo chroot $targetdir bash -c "systemctl enable --now hostapd@wlan0"
 			sudo chroot $targetdir bash -c "systemctl enable --now hostapd@wlan1"
