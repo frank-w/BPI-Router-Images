@@ -69,9 +69,11 @@ if [[ -n "$initrd" ]];then
 		echo "initrd=$initrd" >> ./ubifs/uEnv.txt
 	fi
 fi
+echo
+echo "uEnv.txt (loaded when 'Boot kernel from UBI' is selected in uboot-menu):"
 cat ./ubifs/uEnv.txt
 #cp ${kernelfile} ./ubifs/
-echo $kernelfile
+echo "use kernel from $kernelfile"
 tar -xzf ${kernelfile} --strip-components=1 -C ./ubifs/ --wildcards 'BPI-BOOT/*.itb'
 ls -lh ./ubifs/
 
