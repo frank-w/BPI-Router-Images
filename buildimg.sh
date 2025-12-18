@@ -71,7 +71,7 @@ if [[ -z "${kernelfile}" ]];then
 else
 	kernel=$(echo ${kernelfile}|sed -e 's/^.*_\(.*\).tar.gz/\1/')
 fi
-newimgfile=${board}_${distro}_${kernel}_${device}.img.gz
+newimgfile=${variant:-$board}_${distro}_${kernel}_${device}.img.gz
 
 cp $imgfile $newimgfile
 echo "unpack imgfile ($newimgfile)..."
