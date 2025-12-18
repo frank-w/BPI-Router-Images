@@ -207,7 +207,7 @@ elif board and board in ubootfiles:
     ufile=ubootfiles[board][device]
 
 if ufile:
-    print(f"board:{board} ubootfile: {ufile}")
+    print(f"board:{board} variant:{variant} ubootfile: {ufile}")
     if kernel:
         if kernel+"-main" in kfiles:
             b=board
