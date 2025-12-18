@@ -22,9 +22,12 @@ on:
         type: choice
         description: linux kernel
         options:
+          - 6.18
           - 6.12
           - 6.6
           - 5.15
+      variant:
+        description: board variant (bpi-r4-2g5/bpi-r4pro/bpi-r4lite)
       bootdevice:
         type: choice
         description: Bootdevice
@@ -109,8 +112,9 @@ jobs:
       - name: Build R4 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
         run: |
+          echo -e "variant=\"${{ inputs.variant }}\"" > sourcefiles_bpi-r4.conf
           #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
-          echo -e "replacehostapd=1\nreplaceiperf=1" > sourcefiles_bpi-r4.conf
+          echo -e "replacehostapd=1\nreplaceiperf=1" >> sourcefiles_bpi-r4.conf
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
           ./buildimg.sh bpi-r4 ${{ vars.DEBIAN_DIST }}
 
