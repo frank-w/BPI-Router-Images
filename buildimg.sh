@@ -34,6 +34,7 @@ if [ ${PACKAGE_Error} == 1 ]; then exit 1; fi
 LDEV=`sudo losetup -f`
 
 function cleanup() {
+	sudo umount mnt/BPI-ROOT/proc
 	sudo umount mnt/BPI-BOOT
 	sudo umount mnt/BPI-ROOT
 	sudo losetup -d $1
@@ -132,6 +133,7 @@ fi
 echo "configure rootfs for ${board}..."
 
 targetdir="mnt/BPI-ROOT"
+sudo mount -o bind /proc $targetdir/proc
 
 sudo chroot $targetdir tee "/etc/fstab" > /dev/null <<EOF
 # <file system>		<dir>	<type>	<options>		<dump>	<pass>
