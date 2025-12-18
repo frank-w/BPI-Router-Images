@@ -199,11 +199,14 @@ print("initfiles:",ifiles)
 ufile=None
 kfile=None
 
-if board and board in ubootfiles:
-    #ufile=ubootfiles[board]
-    ufile=ubootfiles[board][device] #={"bl2":{"name":ufname,"url":ufurl}}
+variant = config.get("variant")
 
+if variant and variant in ubootfiles:
+    ufile=ubootfiles[variant][device]
+elif board and board in ubootfiles:
+    ufile=ubootfiles[board][device]
 
+if ufile:
     print(f"board:{board} ubootfile: {ufile}")
     if kernel:
         if kernel+"-main" in kfiles:
