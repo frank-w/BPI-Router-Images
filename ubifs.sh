@@ -49,16 +49,16 @@ touch ./ubifs/uEnv.txt
 
 if [[ -n "$variant" ]];then
 	case $variant in
-		"bpi-r3-mini")
+		"bpi-r3mini")
 			#r3mini is not selected via uEnv.txt...uboot is compiled with fixed bootconf
 		;;
 		"bpi-r4-2g5")
 			echo "is2g5=1" > ./ubifs/uEnv.txt
 		;;
-		"bpi-r4-pro")
+		"bpi-r4pro")
 			echo "isR4Pro=1" > ./ubifs/uEnv.txt
 		;;
-		"bpi-r4-lite")
+		"bpi-r4lite")
 			echo "isr4lite=1" > ./ubifs/uEnv.txt
 		;;
 	esac
