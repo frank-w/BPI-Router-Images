@@ -237,10 +237,13 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		download_firmware $targetdir mediatek/mt7988/i2p5ge-phy-pmb.bin
 		download_firmware $targetdir aeonsemi/as21x1x_fw.bin
 		sudo ls -lRh $fwdir
-		#changes for 2.5g phy and R4Pro variant
-		echo "# is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
-		echo "# isr4pro=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
-		echo "# isr4lite=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		#changes for 2.5g phy and R4Pro/R4Lite variant
+		if [[ "$variant" == "bpi-r4-2g5" ]];then pfx=""; else pfx="# "; fi
+		echo "${pfx}is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		if [[ "$variant" == "bpi-r4pro" ]];then pfx=""; else pfx="# "; fi
+		echo "${pfx}isr4pro=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		if [[ "$variant" == "bpi-r4lite" ]];then pfx=""; else pfx="# "; fi
+		echo "${pfx}isr4lite=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
 	fi
 fi
