@@ -82,32 +82,31 @@ jobs:
         if: ${{ inputs.bpi-r2 }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2.conf
-          ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }}
-          ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }} 6.12
+          ./buildimg.sh bpi-r2 ${{ vars.DEBIAN_DIST }} ${{ inputs.kernel }}
 
       - name: Build R64 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r64 }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r64.conf
-          ./buildimg.sh bpi-r64 ${{ vars.DEBIAN_DIST }}
+          ./buildimg.sh bpi-r64 ${{ vars.DEBIAN_DIST }} ${{ inputs.kernel }}
 
       - name: Build R2Pro Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r2pro }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2pro.conf
-          ./buildimg.sh bpi-r2pro ${{ vars.DEBIAN_DIST }}
+          ./buildimg.sh bpi-r2pro ${{ vars.DEBIAN_DIST }} ${{ inputs.kernel }}
 
       - name: Build R3 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r3 }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3.conf
-          ./buildimg.sh bpi-r3 ${{ vars.DEBIAN_DIST }}
+          ./buildimg.sh bpi-r3 ${{ vars.DEBIAN_DIST }} ${{ inputs.kernel }}
 
       - name: Build R3 Mini Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r3mini }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3mini.conf
-          ./buildimg.sh bpi-r3mini ${{ vars.DEBIAN_DIST }}
+          ./buildimg.sh bpi-r3mini ${{ vars.DEBIAN_DIST }} ${{ inputs.kernel }}
 
       - name: Build R4 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
@@ -116,7 +115,7 @@ jobs:
           #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           echo -e "replacehostapd=1\nreplaceiperf=1" >> sourcefiles_bpi-r4.conf
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
-          ./buildimg.sh bpi-r4 ${{ vars.DEBIAN_DIST }}
+          ./buildimg.sh bpi-r4 ${{ vars.DEBIAN_DIST }} ${{ inputs.kernel }}
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
