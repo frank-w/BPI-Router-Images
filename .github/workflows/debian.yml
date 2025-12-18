@@ -111,7 +111,7 @@ jobs:
       - name: Build R4 Debian ${{ vars.DEBIAN_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
         run: |
-          echo -e "variant=\"${{ inputs.variant }}\"" > sourcefiles_bpi-r4.conf
+          echo -e "variant=${{ inputs.variant }}" > sourcefiles_bpi-r4.conf
           #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
           echo -e "replacehostapd=1\nreplaceiperf=1" >> sourcefiles_bpi-r4.conf
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
