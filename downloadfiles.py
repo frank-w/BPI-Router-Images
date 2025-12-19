@@ -91,7 +91,7 @@ def getUbootInfo():
                 else:
                     ubootfiles[board_][device_]["bl2"]={"name":ufname,"url":ufurl}
             elif ufname.endswith("bl2.img"):
-                print(ufname)
+                #print(ufname)
                 if not "bl2" in ubootfiles[board_][device_]:
                     ubootfiles[board_][device_]["bl2"]={}
                 if "8GB" in ufname:
@@ -149,7 +149,7 @@ def getKernelInfo():
     return kfiles
 
 kfiles=getKernelInfo()
-#print("files:",json.dumps(kfiles,indent=2))
+print("kernel-files:",json.dumps(kfiles,indent=2))
 
 def getBinInfo():
     bin_releases_url="https://api.github.com/repos/frank-w/arm-crosscompile/releases"
