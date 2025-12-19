@@ -201,7 +201,7 @@ kfile=None
 
 variant = config.get("variant")
 
-if variant and variant in ubootfiles:
+if variant and variant in ubootfiles and device in ubootfiles[variant]:
     ufile=ubootfiles[variant][device]
 elif board and board in ubootfiles:
     ufile=ubootfiles[board][device]
