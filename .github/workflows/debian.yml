@@ -27,7 +27,13 @@ on:
           - 6.6
           - 5.15
       variant:
-        description: board variant (bpi-r4-2g5/bpi-r4pro/bpi-r4lite)
+        type: choice
+        description: board variant
+        options:
+          - ''
+          - bpi-r4-2g5
+          - bpi-r4pro
+          - bpi-r4lite
       bootdevice:
         type: choice
         description: Bootdevice
