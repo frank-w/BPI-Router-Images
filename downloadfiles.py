@@ -234,11 +234,11 @@ if not config.get("skipubootdownload") and ufile:
             download(ufile.get("url"),fname)
             newconfig["imgfile"]=fname
     elif device in ['spim-nand','nor']:
-        bl2=ufile.get("bl2")
+        #bl2=ufile.get("bl2")
         fip=ufile.get("fip")
-        if bl2:
-            download(bl2.get("url"),bl2.get("name"))
-            newconfig["bl2file"]=bl2.get("name")
+        #if bl2:
+        #    download(bl2.get("url"),bl2.get("name"))
+        #    newconfig["bl2file"]=bl2.get("name")
         if fip:
             download(fip.get("url"),fip.get("name"))
             newconfig["fipfile"]=fip.get("name")
