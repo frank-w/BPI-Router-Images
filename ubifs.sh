@@ -2,6 +2,7 @@
 # some parts are from here: https://github.com/openwrt/openwrt/blob/main/scripts/ubinize-image.sh
 
 board=$1
+kernel=${2:-6.18}
 
 ubivol() {
 	local volid="$1"
@@ -31,7 +32,7 @@ ubivol() {
 rm -r ./ubifs
 mkdir -p ./ubifs/
 
-python3 downloadfiles.py ${board} 6.12 spim-nand
+python3 downloadfiles.py ${board} ${kernel} spim-nand
 
 . sourcefiles_${board}.conf
 
