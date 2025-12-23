@@ -10,7 +10,7 @@ distro=bookworm
 #ubuntu
 distro_ubuntu=(focal jammy noble)
 #name=ubuntu
-#distro=jammy #22.04
+#distro=noble #24.04
 
 #arch=armhf
 arch=arm64
