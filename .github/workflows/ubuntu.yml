@@ -14,6 +14,30 @@ on:
         type: boolean
       bpi-r4:
         type: boolean
+      packages:
+        description: additional packages (separated by space)
+      kernel:
+        type: choice
+        description: linux kernel
+        options:
+          - 6.18
+          - 6.12
+          - 6.6
+          - 5.15
+      variant:
+        type: choice
+        description: board variant
+        options:
+          - ''
+          - bpi-r4-2g5
+          - bpi-r4pro
+          - bpi-r4lite
+      bootdevice:
+        type: choice
+        description: Bootdevice
+        options:
+          - sdmmc
+          - emmc
 
 jobs:
   ubuntu-gdrive-upload:
@@ -62,33 +86,34 @@ jobs:
         if: ${{ inputs.bpi-r2 }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2.conf
-          ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }}
-          ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }} 6.12
+          ./buildimg.sh bpi-r2 ${{ vars.UBUNTU_DIST }} ${{ inputs.kernel }}
 
       - name: Build R64 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r64 }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r64.conf
-          ./buildimg.sh bpi-r64 ${{ vars.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r64 ${{ vars.UBUNTU_DIST }} ${{ inputs.kernel }}
 
       - name: Build R2Pro Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r2pro }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r2pro.conf
-          ./buildimg.sh bpi-r2pro ${{ vars.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r2pro ${{ vars.UBUNTU_DIST }} ${{ inputs.kernel }}
 
       - name: Build R3 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r3 }}
         run: |
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r3.conf
-          ./buildimg.sh bpi-r3 ${{ vars.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r3 ${{ vars.UBUNTU_DIST }} ${{ inputs.kernel }}
 
       - name: Build R4 Ubuntu ${{ vars.UBUNTU_DIST }} Image
         if: ${{ inputs.bpi-r4 }}
         run: |
-          echo -e "replacehostapd=1\nreplaceiperf=1" > sourcefiles_bpi-r4.conf
+          echo -e "variant=${{ inputs.variant }}" > sourcefiles_bpi-r4.conf
+          #echo -e "skipkerneldownload=1\nkernelfile=${{ env.R4Kernel }}" > sourcefiles_bpi-r4.conf
+          echo -e "replacehostapd=1\nreplaceiperf=1" >> sourcefiles_bpi-r4.conf
           echo -e "userpackages=\"${{ inputs.packages }}\"" >> sourcefiles_bpi-r4.conf
-          ./buildimg.sh bpi-r4 ${{ vars.UBUNTU_DIST }}
+          ./buildimg.sh bpi-r4 ${{ vars.UBUNTU_DIST }} ${{ inputs.kernel }}
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
