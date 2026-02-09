@@ -3,12 +3,23 @@
 ## examples:
 
 ```sh
-./buildimg.sh bpi-r3 bookworm
-./buildimg.sh bpi-r4 jammy
+./buildimg.sh bpi-r3 trixie
+./buildimg.sh bpi-r4 noble
 
 #use kernel 6.12 for r2 (normally 5.15 is used because of internal wifi support)
 ./buildimg.sh bpi-r2 bookworm 6.12
 ```
+
+## build for board variants (R4Lite/R4Pro)
+
+```
+variant=bpi-r4lite
+```
+or
+```
+variant=bpi-r4pro
+```
+in sourcefiles_bpi-r4.conf.
 
 ## use own uboot/kernel files
 
@@ -50,7 +61,7 @@ If they are not defined, script tries to download the latest files.
 if using r4-2g5, r4pro or r4lite board you should set the variant variable.
 
 ```
-variant=bpi-r4-lite
+variant=bpi-r4lite
 skipubootdownload=1
 fipfile=bpi-r4lite_spim-nand_ubi_fip.bin
 skipkerneldownload=1
