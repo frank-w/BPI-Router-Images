@@ -6,7 +6,7 @@
 #r3: dev: 0 part: 5/6
 board=$1
 distro=$2 #bookworm|noble
-kernel="6.12"
+kernel="6.18"
 device="sdmmc"
 
 source config.sh
