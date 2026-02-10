@@ -247,6 +247,11 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		if [[ "$variant" == "bpi-r4lite" ]];then pfx=""; else pfx="# "; fi
 		echo "${pfx}isr4lite=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
+
+		#linux changes
+		if [[ "$variant" == "bpi-r4pro" ]];then
+			sudo rm $targetdir/etc/systemd/network/1*-wan.*
+		fi
 	fi
 fi
 
