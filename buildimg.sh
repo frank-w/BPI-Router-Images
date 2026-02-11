@@ -220,8 +220,9 @@ if [[ ${board} != "bpi-r2pro" ]];then
 	echo "copy firmware files"
 	sudo cp -r firmware/* ${targetdir}/lib/firmware/
 
-	curl https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git/plain/regulatory.db -o regulatory.db-git
-	curl https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git/plain/regulatory.db.p7s -o regulatory.db.p7s-git
+	regulatory_repo=https://git.kernel.org/pub/scm/linux/kernel/git/wens/wireless-regdb.git
+	curl $regulatory_repo/plain/regulatory.db -o regulatory.db-git
+	curl $regulatory_repo/plain/regulatory.db.p7s -o regulatory.db.p7s-git
 
 	sudo cp -r regulatory.* ${targetdir}/lib/firmware/
 	sudo chroot $targetdir bash -c "update-alternatives --install /lib/firmware/regulatory.db regulatory.db /lib/firmware/regulatory.db-git 200 --slave /lib/firmware/regulatory.db.p7s regulatory.db.p7s /lib/firmware/regulatory.db.p7s-git"
