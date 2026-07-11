@@ -245,6 +245,7 @@ if [[ ${board} != "bpi-r2pro" ]];then
 		echo "${pfx}is2g5=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		if [[ "$variant" == "bpi-r4pro" ]];then pfx=""; else pfx="# "; fi
 		echo "${pfx}isr4pro=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
+		echo "#isr4pro4e=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		if [[ "$variant" == "bpi-r4lite" ]];then pfx=""; else pfx="# "; fi
 		echo "${pfx}isr4lite=1" | sudo tee -a mnt/BPI-BOOT/${ubootconfigdir}/${ubootconfig}
 		echo "# mtk-2p5ge" | sudo tee -a ${targetdir}/etc/modules
