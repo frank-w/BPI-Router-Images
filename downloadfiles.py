@@ -128,7 +128,7 @@ def getKernelInfo():
             kname=rel.get("name")
 
             if re.search('CI-BUILD-.*-main',kname):
-                branch=re.sub(r'^CI-BUILD-([56]\.[0-9]+-main).*$',r'\1',kname)
+                branch=re.sub(r'^CI-BUILD-([567]\.[0-9]+-main).*$',r'\1',kname)
                 #print("branch:",branch)
                 rel["body"]=""
                 if branch == kernel+'-main':
