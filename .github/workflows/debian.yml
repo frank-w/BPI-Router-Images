@@ -69,7 +69,7 @@ jobs:
           fi
 
           echo "kernel=$KERNEL_VERSION" >> "$GITHUB_OUTPUT"
-          echo "Verwendete Kernel-Version: $KERNEL_VERSION"
+          echo "Kernel-Version: $KERNEL_VERSION"
 
       - name: Checkout code
         uses: actions/checkout@v2
