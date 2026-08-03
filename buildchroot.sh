@@ -86,14 +86,52 @@ sudo debootstrap --arch=$arch --foreign $distro $targetdir
 sudo cp /etc/resolv.conf $targetdir/etc
 LANG=C
 
-#sudo mount -t proc none $targetdir/proc/
-#sudo mount -t sysfs sys $targetdir/sys/
-#sudo mount -o bind /dev $targetdir/dev/
+sudo mount --rbind /dev "$targetdir/dev"
+sudo mount --make-rslave "$targetdir/dev"
+
+sudo mount -t proc proc "$targetdir/proc"
+sudo mount -t sysfs sys "$targetdir/sys"
+sudo mount --rbind /run "$targetdir/run"
+sudo mount --make-rslave "$targetdir/run"
+
+. /etc/os-release
+
+echo "$VERSION_ID $arch"
+
+case "$arch" in
+	"armhf")
+		qemu=qemu-arm
+		if [[ "$VERSION_ID" =~ ^(22\.04|24\.04)$ ]]; then
+			echo "install armhf static qemu"
+			sudo apt install -y qemu-user-static
+			sudo cp /usr/bin/qemu-arm-static "$targetdir/usr/bin/qemu-arm-static"
+		fi
+	;;
+	"arm64")
+	#for R64/R3/R4 use
+		qemu=qemu-aarch64
+		if [[ "$VERSION_ID" =~ ^(22\.04|24\.04)$ ]]; then
+			echo "install arm64 static qemu"
+			sudo apt install -y qemu-user-static
+			sudo cp /usr/bin/qemu-aarch64-static "$targetdir/usr/bin/qemu-aarch64-static"
+		fi
+	;;
+	"amd64")
+	;;
+	*) echo "unsupported arch $arch";exit 1;;
+esac
+
+#sudo install -m755 "/usr/bin/$qemu" \
+#    "$targetdir/usr/bin/$qemu"
+
 sudo chroot $targetdir /debootstrap/debootstrap --second-stage
+
 ret=$?
 if [[ $ret -ne 0 ]];then
-	#sudo umount $targetdir/proc/
-	#sudo umount $targetdir/sys/
+	sudo umount -R "$targetdir/dev"
+	sudo umount "$targetdir/proc"
+	sudo umount "$targetdir/sys"
+	sudo umount -R "$targetdir/run"
 	#sudo rm -rf $targetdir/*
 	exit $ret;
 fi
@@ -136,6 +174,11 @@ echo 'bpi'| sudo tee $targetdir/etc/hostname
 cd $targetdir
 sudo tar -czf ../${distro}_${arch}.tar.gz .
 )
+
+sudo umount -R "$targetdir/dev"
+sudo umount "$targetdir/proc"
+sudo umount "$targetdir/sys"
+sudo umount -R "$targetdir/run"
 
 if [[ "$ramdisksize" != "" ]];
 then
