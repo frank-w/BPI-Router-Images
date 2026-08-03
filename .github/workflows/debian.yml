@@ -24,8 +24,6 @@ on:
           - bpi-r4-2g5
           - bpi-r4pro
           - bpi-r4lite
-      packages:
-        description: additional packages (separated by space)
       kernel:
         type: choice
         description: linux kernel
@@ -45,6 +43,8 @@ on:
         options:
           - sdmmc
           - emmc
+      packages:
+        description: additional packages (separated by space)
 
 jobs:
   debian-gdrive-upload:
