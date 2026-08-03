@@ -16,6 +16,14 @@ on:
         type: boolean
       bpi-r4:
         type: boolean
+      variant:
+        type: choice
+        description: board variant
+        options:
+          - ''
+          - bpi-r4-2g5
+          - bpi-r4pro
+          - bpi-r4lite
       packages:
         description: additional packages (separated by space)
       kernel:
@@ -31,14 +39,6 @@ on:
         description: "custom kernel version"
         required: false
         type: string
-      variant:
-        type: choice
-        description: board variant
-        options:
-          - ''
-          - bpi-r4-2g5
-          - bpi-r4pro
-          - bpi-r4lite
       bootdevice:
         type: choice
         description: Bootdevice
