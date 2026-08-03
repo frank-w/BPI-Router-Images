@@ -22,6 +22,7 @@ on:
         type: choice
         description: linux kernel
         options:
+          - 7.1
           - 6.18
           - 6.12
           - 6.6
