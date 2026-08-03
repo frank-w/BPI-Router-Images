@@ -4,13 +4,12 @@
 #debian
 distro_debian=(buster bullseye bookworm trixie)
 name=debian
-#distro=bullseye
-distro=bookworm
+distro=trixie
 
 #ubuntu
-distro_ubuntu=(focal jammy noble)
+distro_ubuntu=(focal jammy noble resolute)
 #name=ubuntu
-#distro=jammy #22.04
+#distro=resolute #26.04
 
 #arch=armhf
 arch=arm64
