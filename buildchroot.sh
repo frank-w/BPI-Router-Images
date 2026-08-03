@@ -23,7 +23,7 @@ function checkpkg(){
 	echo "checking for needed packages..."
 	#fix for debian where /usr/sbin/ is not in path for normal users (correctly)
 	export PATH=$PATH:/usr/sbin/
-	for pkg in debootstrap qemu-arm-static qemu-aarch64-static; do
+	for pkg in debootstrap qemu-arm qemu-aarch64; do
 		which $pkg >/dev/null;
 		if [[ $? -ne 0 ]];then
 			echo "$pkg missing";
@@ -83,18 +83,6 @@ fi
 
 #mount | grep 'proc\|sys'
 sudo debootstrap --arch=$arch --foreign $distro $targetdir
-case "$arch" in
-	"armhf")
-		sudo cp /usr/bin/qemu-arm-static $targetdir/usr/bin/
-	;;
-	"arm64")
-	#for r64 use
-		sudo cp /usr/bin/qemu-aarch64-static $targetdir/usr/bin/
-	;;
-	"amd64")
-		;;
-	*) echo "unsupported arch $arch";;
-esac
 sudo cp /etc/resolv.conf $targetdir/etc
 LANG=C
 
